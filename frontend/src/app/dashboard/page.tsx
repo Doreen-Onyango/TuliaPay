@@ -17,7 +17,10 @@ import {
   CheckCircle2, 
   XCircle, 
   ArrowLeft,
-  LogOut 
+  LogOut,
+  Copy,
+  ChevronDown,
+  Check
 } from 'lucide-react';
 import { 
   walletAddressAtom, 
@@ -41,16 +44,29 @@ export default function TuliaPayDashboard() {
   const [depositAmount, setDepositAmount] = useState("");
   const [sendAmount, setSendAmount] = useState("");
   const [recipient, setRecipient] = useState("");
+  
+  // Wallet interaction states
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
 
-  const handleConnect = () => setWalletAddress("0x7F5...3aB9");
+  const handleConnect = () => setWalletAddress("0x7F5A4bD2d78B9c4E9F1A3B8C7D6E5F4A3B2aC9");
   const handleWorldIDVerify = () => setIsVerified(true);
   const handleDisconnect = () => {
     setWalletAddress(null);
     setIsVerified(false);
+    setIsDropdownOpen(false);
   };
   
   const handleToggleBalance = () => {
     setBalance(balance === "****" ? "1,240.50" : "****");
+  };
+
+  const handleCopyAddress = () => {
+    if (walletAddress) {
+      navigator.clipboard.writeText(walletAddress);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    }
   };
 
   const handleDeposit = async (e: React.FormEvent) => {
@@ -111,6 +127,8 @@ export default function TuliaPayDashboard() {
     );
   }
 
+  const truncatedAddress = `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`;
+
   return (
     <motion.div 
       initial={{ opacity: 0, scale: 0.98 }}
@@ -126,16 +144,61 @@ export default function TuliaPayDashboard() {
           </div>
           <span className="font-black text-2xl tracking-tighter text-white">TuliaPay</span>
         </Link>
-        <div className="flex items-center gap-4 font-bold">
-          <div className="hidden md:flex items-center gap-2 bg-emerald-500/10 text-emerald-400 px-4 py-2 rounded-xl border border-emerald-500/20 text-sm">
-            <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></div>
-            {isVerified ? "Human Verified" : "Verification Required"}
-          </div>
-          <div className="bg-slate-900 border border-white/5 px-5 py-2 rounded-xl text-slate-400 font-mono text-xs flex items-center gap-3 group relative">
-            {walletAddress}
-            <button onClick={handleDisconnect} className="text-slate-600 hover:text-rose-400 transition-colors">
-              <LogOut size={16} />
+        
+        <div className="flex items-center gap-6 font-bold">
+          {isVerified && (
+            <div className="hidden md:flex items-center gap-2 bg-emerald-500/10 text-emerald-400 px-4 py-2 rounded-xl border border-emerald-500/20 text-sm">
+              <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></div>
+              Human Verified
+            </div>
+          )}
+          
+          {/* Wallet Dropdown Wrapper */}
+          <div className="relative">
+            <button 
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className={`flex items-center gap-3 px-5 py-2.5 rounded-2xl border transition-all duration-300 ${isDropdownOpen ? 'bg-slate-900 border-brand/50 text-white' : 'bg-slate-900/50 border-white/5 text-slate-400 hover:border-white/20'}`}
+            >
+              <div className="w-2 h-2 bg-brand rounded-full"></div>
+              <span className="font-mono text-xs">{truncatedAddress}</span>
+              <ChevronDown size={14} className={`transition-transform duration-300 ${isDropdownOpen ? 'rotate-180 text-brand' : ''}`} />
             </button>
+
+            <AnimatePresence>
+              {isDropdownOpen && (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                  className="absolute right-0 mt-3 w-72 glass-panel p-6 border-brand/30 shadow-3xl shadow-black/80 space-y-6 z-[200] bg-slate-900/95"
+                >
+                  <div className="space-y-3">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Connected Wallet</p>
+                    <div className="bg-slate-950 p-4 rounded-xl border border-white/5 break-all font-mono text-xs text-brand-light leading-relaxed">
+                      {walletAddress}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-3">
+                    <button 
+                      onClick={handleCopyAddress}
+                      className="w-full flex items-center justify-between p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-colors border border-white/5 group"
+                    >
+                      <span className="text-sm font-bold text-slate-300">Copy Address</span>
+                      {isCopied ? <Check size={18} className="text-emerald-400" /> : <Copy size={18} className="text-slate-500 group-hover:text-white transition-colors" />}
+                    </button>
+
+                    <button 
+                      onClick={handleDisconnect}
+                      className="w-full flex items-center justify-between p-4 bg-rose-500/5 rounded-xl hover:bg-rose-500/10 transition-colors border border-rose-500/10 group"
+                    >
+                      <span className="text-sm font-bold text-rose-400">Disconnect</span>
+                      <LogOut size={18} className="text-rose-400 group-hover:translate-x-1 transition-transform" />
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </nav>
