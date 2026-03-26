@@ -170,7 +170,7 @@ export default function TuliaPayDashboard() {
                   initial={{ opacity: 0, scale: 0.95, y: 10 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                  className="absolute right-0 mt-3 w-72 glass-panel p-6 border-brand/30 shadow-3xl shadow-black/80 space-y-6 z-[200] bg-slate-900/95"
+                  className="absolute right-0 mt-6 w-80 glass-panel p-6 border-brand/30 shadow-3xl shadow-black/80 space-y-6 z-[200] bg-slate-900/95"
                 >
                   <div className="space-y-3">
                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Connected Wallet</p>
