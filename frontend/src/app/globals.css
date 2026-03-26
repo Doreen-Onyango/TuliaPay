@@ -8,7 +8,7 @@
 }
 
 body {
-  background-color: #0f172a;
+  background-color: #020617; /* slate-950 */
   color: #f8fafc;
   background-image: 
     radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
