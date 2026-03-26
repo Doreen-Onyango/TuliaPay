@@ -41,5 +41,19 @@ describe("TuliaEncryptedBalance Identity Linkage", function () {
       const balance = await balanceTest.connect(user1).getEncryptedBalance();
       expect(balance).to.not.equal(100);
     });
+
+    it("Should allow verified users to deposit native asset", async function () {
+      const root = 1;
+      const nullifierHash = 456;
+      const proof: [number, number, number, number, number, number, number, number] = [0,0,0,0,0,0,0,0];
+      
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (balanceTest as any).connect(user1).verifyAndRegister(root, nullifierHash, proof);
+      
+      const depositValue = ethers.parseEther("0.0000000000000001"); // Small value for euint32 limit
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await expect((balanceTest as any).connect(user1).deposit({ value: depositValue }))
+        .to.not.be.reverted;
+    });
   });
 });
