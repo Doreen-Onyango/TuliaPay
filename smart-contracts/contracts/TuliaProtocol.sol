@@ -5,50 +5,38 @@ import {FHE, euint64, externalEuint64, ebool} from "@fhevm/solidity/lib/FHE.sol"
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "./TuliaIdentity.sol";
 
-contract TuliaProtocol is ZamaEthereumConfig, Ownable, ReentrancyGuard {
+/**
+ * @title TuliaProtocol
+ * @author TuliaPay
+ * @notice The main entry point for TuliaPay financial operations.
+ * Inherits identity logic from TuliaIdentity to ensure strict human verification.
+ */
+contract TuliaProtocol is ZamaEthereumConfig, Ownable, ReentrancyGuard, TuliaIdentity {
     // Encrypted balances tracker
     mapping(address => euint64) private _balances;
-    mapping(address => bool) private _isHuman;
-    mapping(uint256 => bool) private _nullifierHashes;
 
     // Metrics tracking
-    uint256 public totalVerifiedHumans;
     uint256 public totalPublicDeposits;
 
     // Events
-    event HumanVerified(address indexed user);
     event DepositConfirmed(address indexed user, uint256 publicAmount);
     event TransferCompleted(address indexed from, address indexed to);
 
-    constructor() Ownable(msg.sender) {}
-
-    // ------------------------------------------------------------------------
-    // IDENTITY & VERIFICATION
-    // ------------------------------------------------------------------------
-    function verifyHuman(
-        uint256 nullifierHash,
-        uint256[8] calldata /* proof */ // Validation integrated in frontend/relayer
-    ) external {
-        require(!_isHuman[msg.sender], "TuliaPay: Address already verified");
-        require(!_nullifierHashes[nullifierHash], "TuliaPay: WorldID already used");
-        
-        // In production: IWorldID.verifyProof(root, groupId, signalHash, nullifierHash, externalNullifier, proof);
-        
-        _nullifierHashes[nullifierHash] = true;
-        _isHuman[msg.sender] = true;
-        totalVerifiedHumans += 1;
-
-        // Initialize user with 0 encrypted balance
-        _balances[msg.sender] = FHE.asEuint64(0);
-        FHE.allowThis(_balances[msg.sender]);
-        FHE.allow(_balances[msg.sender], msg.sender);
-
-        emit HumanVerified(msg.sender);
-    }
+    /**
+     * @param _worldId The WorldID router address.
+     * @param _appId The Worldcoin App ID.
+     * @param _actionId The TuliaPay action ID.
+     */
+    constructor(
+        IWorldID _worldId,
+        string memory _appId,
+        string memory _actionId
+    ) TuliaIdentity(_worldId, _appId, _actionId) Ownable(msg.sender) {}
 
     modifier onlyHuman() {
-        require(_isHuman[msg.sender], "TuliaPay: Unverified human");
+        require(isHumanVerified[msg.sender], "TuliaPay: Unverified human");
         _;
     }
 
@@ -79,10 +67,10 @@ contract TuliaProtocol is ZamaEthereumConfig, Ownable, ReentrancyGuard {
         externalEuint64 encryptedAmount,
         bytes calldata inputProof
     ) external onlyHuman nonReentrant {
-        require(_isHuman[to], "TuliaPay: Recipient not a verified human");
+        require(isHumanVerified[to], "TuliaPay: Recipient not a verified human");
         require(to != msg.sender, "TuliaPay: Cannot send to self");
 
-        // Convert external encrypted payload to internal euint64 using the ZK Proof of knowledge
+        // Convert external encrypted payload to internal euint64
         euint64 amountToTransfer = FHE.fromExternal(encryptedAmount, inputProof);
 
         // Security: Ensure the sender has enough balance blindly
@@ -102,7 +90,6 @@ contract TuliaProtocol is ZamaEthereumConfig, Ownable, ReentrancyGuard {
         FHE.allowThis(_balances[to]);
         FHE.allow(_balances[to], to);
 
-        // Note: The event does not log amounts, maintaining privacy
         emit TransferCompleted(msg.sender, to);
     }
 
