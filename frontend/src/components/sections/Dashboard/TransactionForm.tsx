@@ -40,10 +40,10 @@ export const TransactionForm = ({ type, onBack, onSubmit }: TransactionFormProps
         >
           <ArrowLeft size={32} />
         </button>
-        <h2 className="text-5xl font-black capitalize text-white">{type}</h2>
+        <h2 className="text-3xl md:text-5xl font-black capitalize text-white">{type}</h2>
       </div>
 
-      <div className="glass-panel p-12 space-y-10 border-brand/20 shadow-2xl rounded-[3rem]">
+      <div className="glass-panel p-8 md:p-12 space-y-8 md:space-y-10 border-brand/20 shadow-2xl rounded-[2.5rem] md:rounded-[3rem]">
         <form onSubmit={handleSubmit} className="space-y-10">
           {type === 'send' && (
             <div className="space-y-4">
@@ -64,14 +64,14 @@ export const TransactionForm = ({ type, onBack, onSubmit }: TransactionFormProps
             <div className="relative">
               <input 
                 type="number"
-                className="w-full bg-slate-950/50 border border-white/5 p-10 rounded-3xl text-6xl font-black text-white focus:outline-none focus:border-brand/40 transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                className="w-full bg-slate-950/50 border border-white/5 p-6 md:p-10 rounded-2xl md:rounded-3xl text-3xl md:text-6xl font-black text-white focus:outline-none focus:border-brand/40 transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 placeholder="0.00"
                 step="0.01"
                 required
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
               />
-              <div className="absolute right-10 top-1/2 -translate-y-1/2 font-black text-slate-700 text-3xl">tUSD</div>
+              <div className="absolute right-6 md:right-10 top-1/2 -translate-y-1/2 font-black text-slate-700 text-xl md:text-3xl">tUSD</div>
             </div>
           </div>
 

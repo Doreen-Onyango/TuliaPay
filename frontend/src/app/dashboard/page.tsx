@@ -6,7 +6,6 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { 
   Shield, 
-  BotOff, 
   ArrowLeft
 } from 'lucide-react';
 import { 
@@ -25,6 +24,8 @@ import { WalletDropdown } from '../../components/sections/Dashboard/WalletDropdo
 import { BalanceCard } from '../../components/sections/Dashboard/BalanceCard';
 import { TransactionForm, TransactionOverlay } from '../../components/sections/Dashboard/TransactionForm';
 import { MetricsGrid } from '../../components/sections/Dashboard/MetricsGrid';
+
+import { Verification } from '../../components/sections/Dashboard/Verification';
 
 export default function TuliaPayDashboard() {
   const [walletAddress, setWalletAddress] = useAtom(walletAddressAtom);
@@ -96,7 +97,7 @@ export default function TuliaPayDashboard() {
       className="min-h-screen pb-20 bg-slate-950 text-slate-200"
     >
       {/* Top Navbar */}
-      <nav className="glass-panel sticky top-0 z-50 rounded-none border-t-0 border-x-0 border-b border-white/5 py-4 px-8 flex justify-between items-center bg-slate-950/80 backdrop-blur-xl">
+      <nav className="glass-panel sticky top-0 z-50 rounded-none border-t-0 border-x-0 border-b border-white/5 py-4 px-6 md:px-10 flex justify-between items-center bg-slate-950/80 backdrop-blur-xl">
         <Link href="/" className="flex items-center gap-3 cursor-pointer group active:scale-95 transition-transform">
           <div className="bg-brand p-1.5 rounded-lg shadow-lg shadow-brand/20 group-hover:bg-brand-light transition-colors">
             <Shield className="text-white" size={24} />
@@ -116,28 +117,11 @@ export default function TuliaPayDashboard() {
         </div>
       </nav>
 
-      <main className="max-w-4xl mx-auto mt-12 p-6 space-y-12">
+      <main className="max-w-5xl mx-auto mt-12 md:mt-20 p-6 md:p-10 space-y-12 md:space-y-20">
         <TransactionOverlay status={txStatus} message={txMessage} />
 
         {!isVerified ? (
-           <motion.div 
-             initial={{ opacity: 0, y: 20 }}
-             animate={{ opacity: 1, y: 0 }}
-             className="glass-panel p-12 flex flex-col items-center text-center space-y-8 max-w-xl mx-auto w-full border-brand/20 shadow-2xl rounded-[3rem] bg-slate-900/40"
-           >
-             <div className="w-24 h-24 rounded-full bg-slate-900 flex items-center justify-center shadow-inner border border-slate-800">
-               <BotOff size={40} className="text-brand-light" />
-             </div>
-             <div className="space-y-3">
-               <h2 className="text-3xl font-black text-white">Bot Protection</h2>
-               <p className="text-slate-400 text-lg leading-relaxed font-medium">
-                 All users must verify humanity via World ID before accessing the encrypted vault.
-               </p>
-             </div>
-             <Button variant="primary" size="xl" fullWidth icon={Shield} onClick={handleWorldIDVerify}>
-                Verify with World ID
-             </Button>
-           </motion.div>
+           <Verification onVerify={handleWorldIDVerify} />
         ) : (
           <div className="space-y-12">
             {activeTab === "dashboard" && (

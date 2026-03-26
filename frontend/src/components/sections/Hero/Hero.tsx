@@ -10,7 +10,7 @@ import { Container, Section } from '../../ui/LayoutUtils'
 
 export const Hero = () => {
   return (
-    <Section padding="none" className="pt-40 pb-24">
+    <Section padding="none" className="pt-28 md:pt-40 pb-16 md:pb-24">
       {/* Background Glows */}
       <div className="absolute top-0 left-1/4 -translate-x-1/2 w-[500px] h-[500px] bg-brand/10 rounded-full blur-[120px] pointer-events-none"></div>
       <div className="absolute bottom-0 right-1/4 translate-x-1/2 w-[400px] h-[400px] bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none"></div>
