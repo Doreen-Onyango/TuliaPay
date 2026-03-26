@@ -3,11 +3,17 @@ pragma solidity ^0.8.24;
 
 import {FHE, euint32, ebool} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
+import "./TuliaIdentity.sol";
 
-abstract contract TuliaEncryptedBalance is ZamaEthereumConfig {
+abstract contract TuliaEncryptedBalance is ZamaEthereumConfig, TuliaIdentity {
     mapping(address => euint32) private balances;
 
-    function getEncryptedBalance() public view returns (euint32) {
+    modifier onlyVerifiedHuman() {
+        require(isHumanVerified[msg.sender], "TuliaPay: Unverified human");
+        _;
+    }
+
+    function getEncryptedBalance() public view onlyVerifiedHuman returns (euint32) {
         return balances[msg.sender];
     }
 
