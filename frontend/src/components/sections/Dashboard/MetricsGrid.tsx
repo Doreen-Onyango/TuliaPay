@@ -6,14 +6,14 @@ interface MetricsGridProps {
   metrics: {
     totalHumans: number
     activeChannels: number
-    totalEncryptedVolume: string
+    protocolTVL: string
   }
 }
 
 export const MetricsGrid = ({ metrics }: MetricsGridProps) => {
   const data = [
     { label: "Verified Humans", value: metrics.totalHumans, color: "text-white" },
-    { label: "Vault Privacy", value: "SECURE", color: "text-emerald-400" },
+    { label: "Protocol TVL", value: `$${metrics.protocolTVL}`, color: "text-emerald-400" },
     { label: "Real Time Sync", value: `+${metrics.activeChannels}%`, color: "text-emerald-400" }
   ]
 

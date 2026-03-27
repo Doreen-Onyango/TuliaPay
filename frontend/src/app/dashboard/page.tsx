@@ -15,7 +15,8 @@ import {
   activeTabAtom,
   globalMetricsAtom,
   transactionStatusAtom,
-  transactionMessageAtom
+  transactionMessageAtom,
+  userNonceAtom
 } from '../../store';
 
 // Modular Components
@@ -82,19 +83,33 @@ export default function TuliaPayDashboard() {
     setTimeout(() => setTxStatus("idle"), 3000);
   };
 
+  const [userNonce, setUserNonce] = useAtom(userNonceAtom);
+
   const handleTransactionSubmit = async (data: { amount: string, recipient?: string }) => {
     setTxStatus("processing");
-    setTxMessage(activeTab === "deposit" ? "Generating local FHE proof..." : "Encrypting outbound payload with nonce...");
+    const currentNonce = userNonce;
+    setTxMessage(activeTab === "deposit" 
+      ? "Generating local FHE proof..." 
+      : `Encrypting outbound payload with nonce #${currentNonce}...`
+    );
+    
     await new Promise(r => setTimeout(r, 2000));
     setTxMessage("Relaying encrypted payload to fhEVM...");
     await new Promise(r => setTimeout(r, 2500));
+    
     setTxStatus("success");
     setTxMessage(activeTab === "deposit" 
         ? `Successfully deposited ${data.amount} tUSD into vault.`
         : activeTab === 'withdraw'
-          ? `Withdrawal request for ${data.amount} queued for KMS fulfillment.`
-          : `Securely sent ${data.amount} tUSD to recipient.`
+          ? `Withdrawal request for ${data.amount} queued with nonce #${currentNonce}.`
+          : `Securely sent ${data.amount} tUSD to recipient (Nonce #${currentNonce}).`
     );
+
+    // Increment nonce for the next non-deposit transaction
+    if (activeTab !== "deposit") {
+      setUserNonce((prev: number) => prev + 1);
+    }
+
     setTimeout(() => { 
       setTxStatus("idle"); 
       setActiveTab("dashboard"); 
@@ -103,6 +118,18 @@ export default function TuliaPayDashboard() {
       }
     }, 3000);
   };
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        {/* Transparent initial SSR mount to prevent hydration flickering */}
+      </div>
+    );
+  }
 
   if (!walletAddress) {
     return (
