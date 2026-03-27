@@ -29,11 +29,15 @@ export const WalletDropdown = ({ address, onDisconnect }: WalletDropdownProps) =
     <div className="relative">
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-3 px-5 py-2.5 rounded-xl border transition-all duration-300 ${isOpen ? 'bg-slate-900 border-brand text-white shadow-lg shadow-brand/10' : 'bg-slate-900/50 border-white/5 text-slate-300 hover:border-white/20'}`}
+        className={`flex items-center gap-3 px-5 py-2.5 rounded-xl border transition-all duration-300 ${
+          isOpen 
+            ? 'bg-slate-900 border-brand text-white shadow-lg shadow-brand/10' 
+            : 'bg-slate-900/50 border-white/10 text-slate-300 hover:bg-slate-900 hover:border-brand/40 hover:text-white hover:shadow-md hover:shadow-brand/5'
+        }`}
       >
-        <div className="w-2 h-2 bg-brand-light rounded-full animate-pulse shadow-[0_0_8px_rgba(167,139,250,0.5)]"></div>
+        <div className="w-2 h-2 bg-brand-light rounded-full animate-pulse shadow-[0_0_8px_rgba(251,191,36,0.45)]"></div>
         <span className="font-bold text-sm tracking-tight">{truncatedAddress}</span>
-        <ChevronDown size={14} className={`transition-transform duration-300 ${isOpen ? 'rotate-180 text-brand-light' : ''}`} />
+        <ChevronDown size={14} className={`transition-transform duration-300 ${isOpen ? 'rotate-180 text-brand-light' : 'text-slate-500'}`} />
       </button>
 
       <AnimatePresence>
@@ -43,10 +47,11 @@ export const WalletDropdown = ({ address, onDisconnect }: WalletDropdownProps) =
             <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
             
             <motion.div 
-              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              initial={{ opacity: 0, scale: 0.97, y: -8 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="absolute right-0 top-full pt-2 w-[calc(100vw-2rem)] sm:w-80 z-50"
+              exit={{ opacity: 0, scale: 0.97, y: -8 }}
+              transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="absolute right-0 top-full pt-3 w-[calc(100vw-2rem)] sm:w-80 z-50"
             >
               <div className="glass-panel border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] rounded-2xl md:rounded-3xl overflow-hidden bg-slate-950/98 backdrop-blur-3xl">
               {/* Header Profile Section */}
