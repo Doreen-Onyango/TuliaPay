@@ -51,11 +51,14 @@ export default function TuliaPayDashboard() {
   const [hasPendingWithdrawal, setHasPendingWithdrawal] = React.useState(false);
   const [hasClaimableETH, setHasClaimableETH] = React.useState(false);
 
-  // Mock checking pending state when connecting
+  // In production, you would fetch these from the blockchain on load:
+  // const pending = await contract.pendingWithdrawals(walletAddress);
+  // const claimable = await contract.claimablePublicETH(walletAddress);
   React.useEffect(() => {
     if (walletAddress) {
-      setHasPendingWithdrawal(true);
-      setHasClaimableETH(true);
+      // Mock fetching blockchain state: default to FALSE for clean UI
+      setHasPendingWithdrawal(false);
+      setHasClaimableETH(false);
     }
   }, [walletAddress]);
 
@@ -92,7 +95,13 @@ export default function TuliaPayDashboard() {
           ? `Withdrawal request for ${data.amount} queued for KMS fulfillment.`
           : `Securely sent ${data.amount} tUSD to recipient.`
     );
-    setTimeout(() => { setTxStatus("idle"); setActiveTab("dashboard"); }, 3000);
+    setTimeout(() => { 
+      setTxStatus("idle"); 
+      setActiveTab("dashboard"); 
+      if (activeTab === 'withdraw') {
+        setHasPendingWithdrawal(true);
+      }
+    }, 3000);
   };
 
   if (!walletAddress) {
