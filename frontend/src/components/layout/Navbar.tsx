@@ -12,7 +12,7 @@ import { Container } from '../ui/LayoutUtils'
 export const NavLink = ({ href, children, onClick }: { href: string; children: React.ReactNode; onClick?: () => void }) => (
   <Link 
     href={href} 
-    className="text-slate-400 hover:text-brand-light transition-colors font-bold text-sm md:text-base tracking-tight"
+    className="text-slate-300 hover:text-brand-light transition-colors font-bold text-sm md:text-base tracking-tight"
     onClick={onClick}
   >
     {children}
