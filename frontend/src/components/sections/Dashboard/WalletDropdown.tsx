@@ -46,8 +46,9 @@ export const WalletDropdown = ({ address, onDisconnect }: WalletDropdownProps) =
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="absolute right-0 mt-6 w-[calc(100vw-2rem)] sm:w-80 glass-panel border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-50 rounded-2xl md:rounded-3xl overflow-hidden bg-slate-950/98 backdrop-blur-3xl"
+              className="absolute right-0 top-full pt-2 w-[calc(100vw-2rem)] sm:w-80 z-50"
             >
+              <div className="glass-panel border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] rounded-2xl md:rounded-3xl overflow-hidden bg-slate-950/98 backdrop-blur-3xl">
               {/* Header Profile Section */}
               <div className="p-6 bg-gradient-to-br from-brand/20 via-transparent to-brand/5 border-b border-white/5 space-y-4">
                 <div className="flex items-center gap-4">
@@ -113,6 +114,7 @@ export const WalletDropdown = ({ address, onDisconnect }: WalletDropdownProps) =
                   <LogOut size={18} />
                   Disconnect Vault
                 </button>
+              </div>
               </div>
             </motion.div>
           </>

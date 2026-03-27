@@ -97,7 +97,7 @@ export default function TuliaPayDashboard() {
       className="min-h-screen pb-20 bg-slate-950 text-slate-200"
     >
       {/* Top Navbar */}
-      <nav className="glass-panel sticky top-0 z-50 rounded-none border-t-0 border-x-0 border-b border-white/5 py-4 px-6 md:px-10 flex justify-between items-center bg-slate-950/80 backdrop-blur-xl">
+      <nav className="glass-panel sticky top-0 z-50 rounded-none border-t-0 border-x-0 border-b border-white/5 py-4 px-6 md:px-10 flex justify-between items-center bg-slate-950/80 backdrop-blur-xl !overflow-visible">
         <Link href="/" className="flex items-center gap-3 cursor-pointer group active:scale-95 transition-transform">
           <div className="bg-brand p-1.5 rounded-lg shadow-lg shadow-brand/20 group-hover:bg-brand-light transition-colors">
             <Shield className="text-white" size={24} />
