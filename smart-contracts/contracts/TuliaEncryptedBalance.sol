@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {FHE, euint32, ebool} from "@fhevm/solidity/lib/FHE.sol";
+    import {FHE, euint32, externalEuint32, ebool} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./TuliaIdentity.sol";
@@ -18,6 +18,7 @@ abstract contract TuliaEncryptedBalance is ZamaEthereumConfig, ReentrancyGuard, 
 
     function deposit() external payable onlyVerifiedHuman nonReentrant {
         require(msg.value > 0, "TuliaPay: Zero deposit");
+        require(msg.value <= type(uint32).max, "TuliaPay: Deposit too large");
         euint32 encryptedDeposit = FHE.asEuint32(uint32(msg.value));
         _increaseBalance(msg.sender, encryptedDeposit);
     }
@@ -26,9 +27,11 @@ abstract contract TuliaEncryptedBalance is ZamaEthereumConfig, ReentrancyGuard, 
         return balances[msg.sender];
     }
 
-    function transfer(address to, euint32 amount) external onlyVerifiedHuman nonReentrant {
+    function transfer(address to, externalEuint32 encryptedAmount, bytes calldata inputProof) external onlyVerifiedHuman nonReentrant {
         require(to != address(0), "TuliaPay: Transfer to zero address");
         require(to != msg.sender, "TuliaPay: Cannot transfer to self");
+
+        euint32 amount = FHE.fromExternal(encryptedAmount, inputProof);
 
         ebool isSufficient = FHE.ge(balances[msg.sender], amount);
         euint32 actualTransferAmount = FHE.select(isSufficient, amount, FHE.asEuint32(0));

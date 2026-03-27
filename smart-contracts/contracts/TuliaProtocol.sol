@@ -27,6 +27,7 @@ contract TuliaProtocol is ZamaEthereumConfig, Ownable, ReentrancyGuard, TuliaIde
 
     function deposit() external payable onlyHuman nonReentrant {
         require(msg.value > 0, "TuliaPay: Zero deposit");
+        require(msg.value <= type(uint64).max, "TuliaPay: Deposit too large");
         euint64 encryptedDeposit = FHE.asEuint64(uint64(msg.value));
         _balances[msg.sender] = FHE.add(_balances[msg.sender], encryptedDeposit);
         FHE.allowThis(_balances[msg.sender]);
