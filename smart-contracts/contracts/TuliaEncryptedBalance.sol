@@ -8,8 +8,11 @@ import "./TuliaIdentity.sol";
 
 abstract contract TuliaEncryptedBalance is ZamaEthereumConfig, ReentrancyGuard, TuliaIdentity {
     mapping(address => euint32) private balances;
+    mapping(address => bytes32) public pendingWithdrawals;
 
     event Transfer(address indexed from, address indexed to);
+    event WithdrawalRequested(address indexed user, bytes32 indexed handle);
+    event WithdrawalCompleted(address indexed user, uint32 amount);
 
     modifier onlyVerifiedHuman() {
         require(isHumanVerified[msg.sender], "TuliaPay: Unverified human");
@@ -45,6 +48,46 @@ abstract contract TuliaEncryptedBalance is ZamaEthereumConfig, ReentrancyGuard, 
         FHE.allow(balances[to], to);
 
         emit Transfer(msg.sender, to);
+    }
+
+    function requestWithdrawal(externalEuint32 encryptedAmount, bytes calldata inputProof) external onlyVerifiedHuman nonReentrant {
+        require(pendingWithdrawals[msg.sender] == bytes32(0), "TuliaPay: Existing pending withdrawal");
+
+        euint32 amountToWithdraw = FHE.fromExternal(encryptedAmount, inputProof);
+        ebool hasEnoughFunds = FHE.ge(balances[msg.sender], amountToWithdraw);
+        
+        euint32 approvedWithdrawal = FHE.select(hasEnoughFunds, amountToWithdraw, FHE.asEuint32(0));
+
+        balances[msg.sender] = FHE.sub(balances[msg.sender], approvedWithdrawal);
+        FHE.allowThis(balances[msg.sender]);
+        FHE.allow(balances[msg.sender], msg.sender);
+
+        FHE.makePubliclyDecryptable(approvedWithdrawal);
+        bytes32 handle = FHE.toBytes32(approvedWithdrawal);
+        
+        pendingWithdrawals[msg.sender] = handle;
+        emit WithdrawalRequested(msg.sender, handle);
+    }
+
+    function fulfillWithdrawal(address user, bytes memory abiEncodedCleartexts, bytes memory decryptionProof) external nonReentrant {
+        bytes32 handle = pendingWithdrawals[user];
+        require(handle != bytes32(0), "TuliaPay: No pending withdrawal");
+
+        bytes32[] memory handlesList = new bytes32[](1);
+        handlesList[0] = handle;
+
+        require(FHE.isPublicDecryptionResultValid(handlesList, abiEncodedCleartexts, decryptionProof), "TuliaPay: Invalid decryption proof");
+
+        uint32 decryptedAmount = abi.decode(abiEncodedCleartexts, (uint32));
+        
+        pendingWithdrawals[user] = bytes32(0);
+        
+        if (decryptedAmount > 0) {
+            (bool success, ) = payable(user).call{value: decryptedAmount}("");
+            require(success, "TuliaPay: ETH transfer failed");
+        }
+        
+        emit WithdrawalCompleted(user, decryptedAmount);
     }
 
     function _increaseBalance(address user, euint32 amount) internal {
