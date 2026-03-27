@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { useState } from 'react';
 import { useAtom } from 'jotai';
@@ -12,6 +12,7 @@ import {
   transactionStatusAtom,
   transactionMessageAtom
 } from '../store';
+import { WorldIDVerifyButton } from "./world-idkit-client";
 
 export default function TuliaPayDashboard() {
   const [walletAddress, setWalletAddress] = useAtom(walletAddressAtom);
@@ -25,9 +26,7 @@ export default function TuliaPayDashboard() {
   const [depositAmount, setDepositAmount] = useState("");
   const [sendAmount, setSendAmount] = useState("");
   const [recipient, setRecipient] = useState("");
-
   const handleConnect = () => setWalletAddress("0x7F5...3aB9");
-  const handleWorldIDVerify = () => setIsVerified(true);
   
   const handleToggleBalance = () => {
     setBalance(balance === "****" ? "1,240.50" : "****");
@@ -103,12 +102,7 @@ export default function TuliaPayDashboard() {
               humanity via World ID before accessing the encrypted vault.
             </p>
           </div>
-          <button 
-            onClick={handleWorldIDVerify}
-            className="w-full py-5 bg-brand text-white font-black rounded-2xl hover:bg-brand-light transition-all flex items-center justify-center gap-4 text-xl shadow-lg shadow-brand/30"
-          >
-            <Shield size={24} /> Verify with World ID
-          </button>
+          <WorldIDVerifyButton />
         </div>
       </div>
     );
