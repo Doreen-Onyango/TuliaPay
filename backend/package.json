@@ -23,6 +23,7 @@
     "typescript": "^6.0.2"
   },
   "dependencies": {
+    "@worldcoin/idkit-core": "^4.0.16",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "ethers": "^6.16.0",
