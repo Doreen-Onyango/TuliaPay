@@ -14,7 +14,7 @@ export const Verification = ({ onVerify }: VerificationProps) => {
     <motion.div 
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="glass-panel p-8 md:p-16 flex flex-col items-center text-center space-y-10 md:space-y-12 max-w-2xl mx-auto w-full border-brand/20 shadow-3xl rounded-[2.5rem] md:rounded-[4rem] relative overflow-hidden bg-slate-900/60"
+      className="glass-panel p-8 md:p-16 flex flex-col items-center text-center space-y-10 md:space-y-12 max-w-2xl mx-auto w-full border-brand/20 shadow-3xl rounded-3xl md:rounded-[2.5rem] relative overflow-hidden bg-slate-900/60"
     >
       {/* Background Animation */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand to-transparent opacity-50 animate-[scan_3s_linear_infinite]"></div>
@@ -22,7 +22,7 @@ export const Verification = ({ onVerify }: VerificationProps) => {
       <div className="relative group">
         {/* Radar Pulse */}
         <div className="absolute inset-0 bg-brand/20 rounded-full animate-ping opacity-20 group-hover:bg-brand/40"></div>
-        <div className="w-24 h-24 md:w-32 md:h-32 rounded-2xl md:rounded-[2.5rem] bg-slate-950 flex items-center justify-center shadow-inner border border-white/5 relative z-10">
+        <div className="w-24 h-24 md:w-32 md:h-32 rounded-xl md:rounded-2xl bg-slate-950 flex items-center justify-center shadow-inner border border-white/5 relative z-10">
           <BotOff size={48} className="text-brand-light md:w-14 md:h-14 group-hover:scale-110 transition-transform" />
         </div>
         {/* Micro-sparkles */}

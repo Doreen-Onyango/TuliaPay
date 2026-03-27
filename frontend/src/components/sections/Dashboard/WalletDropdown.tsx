@@ -29,7 +29,7 @@ export const WalletDropdown = ({ address, onDisconnect }: WalletDropdownProps) =
     <div className="relative">
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-3 px-5 py-2.5 rounded-2xl border transition-all duration-300 ${isOpen ? 'bg-slate-900 border-brand text-white shadow-lg shadow-brand/10' : 'bg-slate-900/50 border-white/5 text-slate-300 hover:border-white/20'}`}
+        className={`flex items-center gap-3 px-5 py-2.5 rounded-xl border transition-all duration-300 ${isOpen ? 'bg-slate-900 border-brand text-white shadow-lg shadow-brand/10' : 'bg-slate-900/50 border-white/5 text-slate-300 hover:border-white/20'}`}
       >
         <div className="w-2 h-2 bg-brand-light rounded-full animate-pulse shadow-[0_0_8px_rgba(167,139,250,0.5)]"></div>
         <span className="font-bold text-sm tracking-tight">{truncatedAddress}</span>
@@ -46,12 +46,12 @@ export const WalletDropdown = ({ address, onDisconnect }: WalletDropdownProps) =
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="absolute right-0 mt-6 w-[calc(100vw-2rem)] sm:w-80 glass-panel border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-50 rounded-[2.5rem] overflow-hidden bg-slate-950/98 backdrop-blur-3xl"
+              className="absolute right-0 mt-6 w-[calc(100vw-2rem)] sm:w-80 glass-panel border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-50 rounded-2xl md:rounded-3xl overflow-hidden bg-slate-950/98 backdrop-blur-3xl"
             >
               {/* Header Profile Section */}
               <div className="p-6 bg-gradient-to-br from-brand/20 via-transparent to-brand/5 border-b border-white/5 space-y-4">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-brand/10 border border-brand/20 flex items-center justify-center text-brand-light">
+                  <div className="w-12 h-12 rounded-xl bg-brand/10 border border-brand/20 flex items-center justify-center text-brand-light">
                     <User size={24} strokeWidth={2.5} />
                   </div>
                   <div>
@@ -93,7 +93,7 @@ export const WalletDropdown = ({ address, onDisconnect }: WalletDropdownProps) =
                 </div>
                 
                 {isVerified && (
-                  <div className="flex items-center gap-2 text-[10px] font-black text-emerald-400 px-3 py-2.5 bg-emerald-500/10 rounded-xl border border-emerald-500/20 tracking-wider">
+                  <div className="flex items-center gap-2 text-[10px] font-black text-emerald-400 px-3 py-2.5 bg-emerald-500/10 rounded-lg border border-emerald-500/20 tracking-wider">
                     <ShieldCheck size={14} />
                     VERIFIED HUMAN IDENTITY
                   </div>
@@ -102,13 +102,13 @@ export const WalletDropdown = ({ address, onDisconnect }: WalletDropdownProps) =
 
               {/* Action Menu */}
               <div className="p-2 bg-slate-900/60 border-t border-white/5 grid grid-cols-1 gap-1">
-                <button className="flex items-center gap-3 p-4 rounded-2xl hover:bg-white/5 text-slate-300 hover:text-white transition-all text-sm font-bold group">
+                <button className="flex items-center gap-3 p-4 rounded-xl hover:bg-white/5 text-slate-300 hover:text-white transition-all text-sm font-bold group">
                   <ExternalLink size={18} className="text-slate-500 group-hover:text-white transition-colors" />
                   View on Explorer
                 </button>
                 <button 
                   onClick={onDisconnect}
-                  className="flex items-center gap-3 p-4 rounded-2xl hover:bg-rose-500/10 text-rose-400/80 hover:text-rose-400 transition-all text-sm font-bold"
+                  className="flex items-center gap-3 p-4 rounded-xl hover:bg-rose-500/10 text-rose-400/80 hover:text-rose-400 transition-all text-sm font-bold"
                 >
                   <LogOut size={18} />
                   Disconnect Vault

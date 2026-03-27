@@ -16,7 +16,7 @@ export const BalanceCard = ({ balance, onToggle, onAction }: BalanceCardProps) =
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="relative overflow-hidden rounded-[2.5rem] md:rounded-[3rem] p-8 md:p-12 shadow-2xl shadow-slate-950/50 glass-panel border border-white/10 bg-slate-900/80 group"
+      className="relative overflow-hidden rounded-2xl md:rounded-3xl p-8 md:p-12 shadow-2xl shadow-slate-950/50 glass-panel border border-white/10 bg-slate-900/80 group"
     >
       <div className="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl group-hover:scale-110 transition-transform duration-700"></div>
       <p className="text-white/80 font-black uppercase tracking-widest text-[10px] md:text-xs flex items-center gap-2">

@@ -87,7 +87,7 @@ export const Hero = () => {
             <div className="absolute inset-0 border-[2px] border-brand/20 rounded-[4rem] animate-[ping_4s_cubic-bezier(0,0,0.2,1)_infinite] opacity-20"></div>
             <div className="absolute inset-0 border-[2px] border-brand/20 rounded-[4rem] animate-[spin_30s_linear_infinite] opacity-30"></div>
             
-            <div className="relative glass-panel rounded-[2.5rem] md:rounded-[3.3rem] overflow-hidden border-white/10 shadow-3xl max-h-[400px] md:max-h-[600px] lg:max-h-none flex items-center justify-center">
+            <div className="relative glass-panel rounded-2xl md:rounded-3xl overflow-hidden border-white/10 shadow-3xl max-h-[400px] md:max-h-[600px] lg:max-h-none flex items-center justify-center">
               <Image 
                 src="/tuliapay_hero_illustration_1774560012997.png" 
                 alt="TuliaPay Secure Illustration" 
@@ -102,7 +102,7 @@ export const Hero = () => {
             <motion.div 
               animate={{ y: [0, -10, 0] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute -top-6 -right-4 md:-top-12 md:-right-8 glass-panel p-3 md:p-4 rounded-xl md:rounded-2xl border-brand/30 shadow-2xl flex items-center gap-3 z-20 scale-90 md:scale-100"
+              className="absolute -top-6 -right-4 md:-top-12 md:-right-8 glass-panel p-3 md:p-4 rounded-lg md:rounded-xl border-brand/30 shadow-2xl flex items-center gap-3 z-20 scale-90 md:scale-100"
             >
               <div className="bg-brand/20 p-2 rounded-lg">
                 <Lock size={18} className="text-brand-light" />

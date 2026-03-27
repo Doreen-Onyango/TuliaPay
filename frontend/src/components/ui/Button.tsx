@@ -51,7 +51,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       className={`
-        inline-flex items-center justify-center font-black rounded-2xl transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:pointer-events-none gap-3 tracking-tight
+        inline-flex items-center justify-center font-black rounded-xl transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:pointer-events-none gap-3 tracking-tight
         ${variants[variant]} 
         ${sizes[size]} 
         ${fullWidth ? 'w-full' : ''} 
