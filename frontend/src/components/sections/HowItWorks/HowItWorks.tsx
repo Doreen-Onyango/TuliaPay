@@ -24,7 +24,7 @@ const StepCard = ({ icon: Icon, title, desc, index }: StepCardProps) => (
       <Icon size={32} className="text-brand-light" />
     </div>
     <h3 className="text-2xl font-black text-white mb-3 tracking-tight">{index + 1}. {title}</h3>
-    <p className="text-slate-400 leading-relaxed font-medium">
+    <p className="text-slate-300 leading-relaxed font-medium">
       {desc}
     </p>
   </motion.div>
@@ -53,9 +53,14 @@ export const HowItWorks = () => {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
+          {/* Connector Line (Desktop) */}
+          <div className="hidden md:block absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-brand/20 to-transparent -translate-y-1/2 z-0" />
+          
           {steps.map((step, i) => (
-            <StepCard key={i} {...step} index={i} />
+            <div key={i} className="relative z-10">
+              <StepCard {...step} index={i} />
+            </div>
           ))}
         </div>
       </Container>
