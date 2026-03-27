@@ -55,7 +55,7 @@ export const Benefits = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="glass-panel p-8 group hover:border-brand/30 transition-all duration-500 rounded-[2.5rem]"
+              className="glass-panel p-8 group hover:border-brand/30 transition-all duration-500 rounded-3xl md:rounded-[2.5rem]"
             >
               <div className="w-14 h-14 bg-slate-900 rounded-2xl border border-white/5 flex items-center justify-center mb-6 group-hover:bg-brand/10 transition-colors">
                 <benefit.icon className="text-brand-light group-hover:scale-110 transition-transform" />

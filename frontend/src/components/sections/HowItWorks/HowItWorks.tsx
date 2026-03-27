@@ -18,7 +18,7 @@ const StepCard = ({ icon: Icon, title, desc, index }: StepCardProps) => (
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true }}
     transition={{ delay: index * 0.15 }}
-    className="glass-panel group p-8 md:p-10 hover:border-brand/40 transition-all border-white/5 bg-slate-900/40 rounded-[2rem] md:rounded-[2.5rem]"
+    className="glass-panel group p-8 md:p-10 hover:border-brand/40 transition-all border-white/5 bg-slate-900/40 rounded-3xl md:rounded-[2.5rem]"
   >
     <div className="w-16 h-16 bg-slate-950 rounded-2xl border border-white/5 flex items-center justify-center mb-8 group-hover:scale-110 group-hover:border-brand/30 transition-all shadow-inner">
       <Icon size={32} className="text-brand-light" />

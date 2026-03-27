@@ -19,7 +19,7 @@ export const CTA = () => {
           initial={{ scale: 0.95, opacity: 0 }}
           whileInView={{ scale: 1, opacity: 1 }}
           viewport={{ once: true }}
-          className="relative overflow-hidden p-12 md:p-24 bg-gradient-to-br from-brand via-brand/90 to-slate-900 rounded-[3rem] md:rounded-[4rem] text-center space-y-10 shadow-3xl shadow-brand/30 border border-white/10"
+          className="relative overflow-hidden p-8 sm:p-12 md:p-24 bg-gradient-to-br from-brand via-brand/90 to-slate-900 rounded-[2.5rem] md:rounded-[4rem] text-center space-y-10 shadow-3xl shadow-brand/30 border border-white/10"
         >
           {/* Decorative Elements */}
           <div className="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-brand-light/20 rounded-full blur-[120px] animate-pulse"></div>

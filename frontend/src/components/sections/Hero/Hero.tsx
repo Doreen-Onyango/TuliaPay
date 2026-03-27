@@ -68,7 +68,7 @@ export const Hero = () => {
             </Link>
           </div>
 
-          <div className="pt-8 grid grid-cols-2 md:grid-cols-3 gap-6 grayscale hover:grayscale-0 transition-all duration-500 cursor-default">
+          <div className="pt-10 md:pt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-8 grayscale hover:grayscale-0 transition-all duration-500 cursor-default">
             <TrustMarker icon={ShieldCheck} text="Zama FHE" />
             <TrustMarker icon={Globe} text="World ID" />
             <TrustMarker icon={Zap} text="Low Gas" />
@@ -87,13 +87,13 @@ export const Hero = () => {
             <div className="absolute inset-0 border-[2px] border-brand/20 rounded-[4rem] animate-[ping_4s_cubic-bezier(0,0,0.2,1)_infinite] opacity-20"></div>
             <div className="absolute inset-0 border-[2px] border-brand/20 rounded-[4rem] animate-[spin_30s_linear_infinite] opacity-30"></div>
             
-            <div className="relative glass-panel rounded-[3rem] overflow-hidden border-white/10 shadow-3xl">
+            <div className="relative glass-panel rounded-[2.5rem] md:rounded-[3.3rem] overflow-hidden border-white/10 shadow-3xl max-h-[400px] md:max-h-[600px] lg:max-h-none flex items-center justify-center">
               <Image 
                 src="/tuliapay_hero_illustration_1774560012997.png" 
                 alt="TuliaPay Secure Illustration" 
                 width={800} 
                 height={800}
-                className="relative transition-transform duration-700 group-hover:scale-[1.05] contrast-[1.05]"
+                className="relative transition-transform duration-700 group-hover:scale-[1.05] contrast-[1.05] object-cover w-full h-full"
               />
               <div className="absolute inset-0 bg-gradient-to-tr from-brand/20 to-transparent pointer-events-none" />
             </div>
@@ -102,10 +102,10 @@ export const Hero = () => {
             <motion.div 
               animate={{ y: [0, -10, 0] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute -top-12 -right-8 glass-panel p-4 rounded-2xl border-brand/30 shadow-2xl flex items-center gap-3"
+              className="absolute -top-6 -right-4 md:-top-12 md:-right-8 glass-panel p-3 md:p-4 rounded-xl md:rounded-2xl border-brand/30 shadow-2xl flex items-center gap-3 z-20 scale-90 md:scale-100"
             >
               <div className="bg-brand/20 p-2 rounded-lg">
-                <Lock size={20} className="text-brand-light" />
+                <Lock size={18} className="text-brand-light" />
               </div>
               <div className="text-left">
                 <div className="text-[10px] font-black uppercase tracking-wider text-brand-light">Status</div>
