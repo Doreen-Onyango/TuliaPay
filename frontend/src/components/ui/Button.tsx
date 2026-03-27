@@ -1,12 +1,13 @@
 "use client"
 
 import React from 'react'
-import { motion } from 'framer-motion'
+import { motion, HTMLMotionProps } from 'framer-motion'
 import { LucideIcon } from 'lucide-react'
 
 type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'glass' | 'danger' | 'white'
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends Omit<HTMLMotionProps<"button">, 'size' | 'children'> {
+  children?: React.ReactNode
   variant?: ButtonVariant
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl'
   icon?: LucideIcon
