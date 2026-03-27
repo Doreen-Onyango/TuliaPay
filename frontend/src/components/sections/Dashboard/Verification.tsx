@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Shield, BotOff, Sparkles, UserCheck } from 'lucide-react'
+import { Shield, BotOff, UserCheck } from 'lucide-react'
 import { Button } from '../../ui/Button'
 
 interface VerificationProps {
@@ -24,10 +24,6 @@ export const Verification = ({ onVerify }: VerificationProps) => {
         <div className="absolute inset-0 bg-brand/20 rounded-full animate-ping opacity-20 group-hover:bg-brand/40"></div>
         <div className="w-24 h-24 md:w-32 md:h-32 rounded-xl md:rounded-2xl bg-slate-950 flex items-center justify-center shadow-inner border border-white/5 relative z-10">
           <BotOff size={48} className="text-brand-light md:w-14 md:h-14 group-hover:scale-110 transition-transform" />
-        </div>
-        {/* Micro-sparkles */}
-        <div className="absolute -top-2 -right-2 md:-top-4 md:-right-4 bg-brand/20 p-2 rounded-lg backdrop-blur-md animate-bounce">
-            <Sparkles size={16} className="text-brand-light" />
         </div>
       </div>
 
