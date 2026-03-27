@@ -114,9 +114,11 @@ export function WorldIDVerifyButton() {
       setIsVerified(true);
       setConnectorURI(null);
       setState("verified");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("[World ID] client error:", err);
-      setError(err?.message || "Unexpected World ID error");
+      const message =
+        err instanceof Error ? err.message : "Unexpected World ID error";
+      setError(message);
       setState("error");
     }
   }, [isVerified, setIsVerified, state]);
