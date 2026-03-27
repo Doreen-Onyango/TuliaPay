@@ -14,6 +14,9 @@ abstract contract TuliaEncryptedBalance is ZamaEthereumConfig, Ownable, Reentran
     mapping(address => uint256) public withdrawalTimestamps;
     mapping(address => uint256) public claimablePublicETH;
     mapping(address => uint256) public nonces;
+    uint256 public totalPublicDeposits; // Current TVL
+    uint256 public totalDeposits;       // Cumulative deposits
+    uint256 public totalWithdrawn;      // Cumulative withdrawals
     uint256 public constant WITHDRAWAL_TIMEOUT = 1 hours;
 
     event Transfer(address indexed from, address indexed to);
@@ -31,6 +34,8 @@ abstract contract TuliaEncryptedBalance is ZamaEthereumConfig, Ownable, Reentran
         require(msg.value <= type(uint32).max, "TuliaPay: Deposit too large");
         euint32 encryptedDeposit = FHE.asEuint32(uint32(msg.value));
         _increaseBalance(msg.sender, encryptedDeposit);
+        totalPublicDeposits += msg.value;
+        totalDeposits += msg.value;
     }
 
     function getEncryptedBalance() public view onlyVerifiedHuman returns (euint32) {
@@ -113,6 +118,8 @@ abstract contract TuliaEncryptedBalance is ZamaEthereumConfig, Ownable, Reentran
         withdrawalTimestamps[user] = 0;
         
         if (decryptedAmount > 0) {
+            totalPublicDeposits -= decryptedAmount;
+            totalWithdrawn += decryptedAmount;
             (bool success, ) = payable(user).call{value: decryptedAmount}("");
             if (!success) {
                 claimablePublicETH[user] += decryptedAmount;

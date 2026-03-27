@@ -14,7 +14,9 @@ contract TuliaProtocol is ZamaEthereumConfig, Ownable, ReentrancyGuard, TuliaIde
     mapping(address => uint256) public withdrawalTimestamps;
     mapping(address => uint256) public claimablePublicETH;
     mapping(address => uint256) public nonces;
-    uint256 public totalPublicDeposits;
+    uint256 public totalPublicDeposits; // Current TVL
+    uint256 public totalDeposits;       // Cumulative deposits
+    uint256 public totalWithdrawn;      // Cumulative withdrawals
     uint256 public constant WITHDRAWAL_TIMEOUT = 1 hours;
 
     event DepositConfirmed(address indexed user, uint256 publicAmount);
@@ -42,6 +44,7 @@ contract TuliaProtocol is ZamaEthereumConfig, Ownable, ReentrancyGuard, TuliaIde
         FHE.allowThis(_balances[msg.sender]);
         FHE.allow(_balances[msg.sender], msg.sender);
         totalPublicDeposits += msg.value;
+        totalDeposits += msg.value;
         emit DepositConfirmed(msg.sender, msg.value);
     }
 
@@ -130,6 +133,7 @@ contract TuliaProtocol is ZamaEthereumConfig, Ownable, ReentrancyGuard, TuliaIde
         
         if (decryptedAmount > 0) {
             totalPublicDeposits -= decryptedAmount;
+            totalWithdrawn += decryptedAmount;
             (bool success, ) = payable(user).call{value: decryptedAmount}("");
             if (!success) {
                 claimablePublicETH[user] += decryptedAmount;
