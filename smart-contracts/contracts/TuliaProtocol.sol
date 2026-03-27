@@ -10,6 +10,7 @@ import "./TuliaIdentity.sol";
 contract TuliaProtocol is ZamaEthereumConfig, Ownable, ReentrancyGuard, TuliaIdentity {
     mapping(address => euint64) private _balances;
     mapping(address => bytes32) public pendingWithdrawals;
+    mapping(address => uint256) public nonces;
     uint256 public totalPublicDeposits;
 
     event DepositConfirmed(address indexed user, uint256 publicAmount);
@@ -42,10 +43,12 @@ contract TuliaProtocol is ZamaEthereumConfig, Ownable, ReentrancyGuard, TuliaIde
     function sendEncrypted(
         address to,
         externalEuint64 encryptedAmount,
-        bytes calldata inputProof
+        bytes calldata inputProof,
+        uint256 nonce
     ) external onlyHuman nonReentrant {
         require(isHumanVerified[to], "TuliaPay: Recipient not a verified human");
         require(to != msg.sender, "TuliaPay: Cannot send to self");
+        require(nonce == nonces[msg.sender]++, "TuliaPay: Invalid nonce");
 
         euint64 amountToTransfer = FHE.fromExternal(encryptedAmount, inputProof);
         ebool hasEnoughFunds = FHE.le(amountToTransfer, _balances[msg.sender]);
@@ -66,8 +69,9 @@ contract TuliaProtocol is ZamaEthereumConfig, Ownable, ReentrancyGuard, TuliaIde
         return _balances[msg.sender];
     }
 
-    function requestWithdrawal(externalEuint64 encryptedAmount, bytes calldata inputProof) external onlyHuman nonReentrant {
+    function requestWithdrawal(externalEuint64 encryptedAmount, bytes calldata inputProof, uint256 nonce) external onlyHuman nonReentrant {
         require(pendingWithdrawals[msg.sender] == bytes32(0), "TuliaPay: Existing pending withdrawal");
+        require(nonce == nonces[msg.sender]++, "TuliaPay: Invalid nonce");
 
         euint64 amountToWithdraw = FHE.fromExternal(encryptedAmount, inputProof);
         ebool hasEnoughFunds = FHE.le(amountToWithdraw, _balances[msg.sender]);
@@ -85,7 +89,7 @@ contract TuliaProtocol is ZamaEthereumConfig, Ownable, ReentrancyGuard, TuliaIde
         emit WithdrawalRequested(msg.sender, handle);
     }
 
-    function fulfillWithdrawal(address user, bytes memory abiEncodedCleartexts, bytes memory decryptionProof) external nonReentrant {
+    function fulfillWithdrawal(address user, bytes memory abiEncodedCleartexts, bytes memory decryptionProof) external onlyOwner nonReentrant {
         bytes32 handle = pendingWithdrawals[user];
         require(handle != bytes32(0), "TuliaPay: No pending withdrawal");
 

@@ -1,14 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-    import {FHE, euint32, externalEuint32, ebool} from "@fhevm/solidity/lib/FHE.sol";
+import {FHE, euint32, externalEuint32, ebool} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "./TuliaIdentity.sol";
 
-abstract contract TuliaEncryptedBalance is ZamaEthereumConfig, ReentrancyGuard, TuliaIdentity {
+abstract contract TuliaEncryptedBalance is ZamaEthereumConfig, Ownable, ReentrancyGuard, TuliaIdentity {
     mapping(address => euint32) private balances;
     mapping(address => bytes32) public pendingWithdrawals;
+    mapping(address => uint256) public nonces;
 
     event Transfer(address indexed from, address indexed to);
     event WithdrawalRequested(address indexed user, bytes32 indexed handle);
@@ -30,9 +32,10 @@ abstract contract TuliaEncryptedBalance is ZamaEthereumConfig, ReentrancyGuard, 
         return balances[msg.sender];
     }
 
-    function transfer(address to, externalEuint32 encryptedAmount, bytes calldata inputProof) external onlyVerifiedHuman nonReentrant {
+    function transfer(address to, externalEuint32 encryptedAmount, bytes calldata inputProof, uint256 nonce) external onlyVerifiedHuman nonReentrant {
         require(to != address(0), "TuliaPay: Transfer to zero address");
         require(to != msg.sender, "TuliaPay: Cannot transfer to self");
+        require(nonce == nonces[msg.sender]++, "TuliaPay: Invalid nonce");
 
         euint32 amount = FHE.fromExternal(encryptedAmount, inputProof);
 
@@ -50,8 +53,9 @@ abstract contract TuliaEncryptedBalance is ZamaEthereumConfig, ReentrancyGuard, 
         emit Transfer(msg.sender, to);
     }
 
-    function requestWithdrawal(externalEuint32 encryptedAmount, bytes calldata inputProof) external onlyVerifiedHuman nonReentrant {
+    function requestWithdrawal(externalEuint32 encryptedAmount, bytes calldata inputProof, uint256 nonce) external onlyVerifiedHuman nonReentrant {
         require(pendingWithdrawals[msg.sender] == bytes32(0), "TuliaPay: Existing pending withdrawal");
+        require(nonce == nonces[msg.sender]++, "TuliaPay: Invalid nonce");
 
         euint32 amountToWithdraw = FHE.fromExternal(encryptedAmount, inputProof);
         ebool hasEnoughFunds = FHE.ge(balances[msg.sender], amountToWithdraw);
@@ -69,7 +73,7 @@ abstract contract TuliaEncryptedBalance is ZamaEthereumConfig, ReentrancyGuard, 
         emit WithdrawalRequested(msg.sender, handle);
     }
 
-    function fulfillWithdrawal(address user, bytes memory abiEncodedCleartexts, bytes memory decryptionProof) external nonReentrant {
+    function fulfillWithdrawal(address user, bytes memory abiEncodedCleartexts, bytes memory decryptionProof) external onlyOwner nonReentrant {
         bytes32 handle = pendingWithdrawals[user];
         require(handle != bytes32(0), "TuliaPay: No pending withdrawal");
 

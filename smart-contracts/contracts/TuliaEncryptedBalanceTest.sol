@@ -9,7 +9,7 @@ contract TuliaEncryptedBalanceTest is TuliaEncryptedBalance {
         IWorldID _worldId,
         string memory _appId,
         string memory _actionId
-    ) TuliaIdentity(_worldId, _appId, _actionId) {}
+    ) TuliaIdentity(_worldId, _appId, _actionId) Ownable(msg.sender) {}
 
     function depositEncrypted(address user, externalEuint32 input_amount, bytes calldata input_proof) external onlyVerifiedHuman {
         euint32 encrypted_amount = FHE.fromExternal(input_amount, input_proof);
