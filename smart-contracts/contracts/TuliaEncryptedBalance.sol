@@ -10,10 +10,15 @@ import "./TuliaIdentity.sol";
 abstract contract TuliaEncryptedBalance is ZamaEthereumConfig, Ownable, ReentrancyGuard, TuliaIdentity {
     mapping(address => euint32) private balances;
     mapping(address => bytes32) public pendingWithdrawals;
+    mapping(address => euint32) public lockedWithdrawalAmounts;
+    mapping(address => uint256) public withdrawalTimestamps;
+    mapping(address => uint256) public claimablePublicETH;
     mapping(address => uint256) public nonces;
+    uint256 public constant WITHDRAWAL_TIMEOUT = 1 hours;
 
     event Transfer(address indexed from, address indexed to);
     event WithdrawalRequested(address indexed user, bytes32 indexed handle);
+    event WithdrawalCancelled(address indexed user);
     event WithdrawalCompleted(address indexed user, uint32 amount);
 
     modifier onlyVerifiedHuman() {
@@ -70,7 +75,27 @@ abstract contract TuliaEncryptedBalance is ZamaEthereumConfig, Ownable, Reentran
         bytes32 handle = FHE.toBytes32(approvedWithdrawal);
         
         pendingWithdrawals[msg.sender] = handle;
+        lockedWithdrawalAmounts[msg.sender] = approvedWithdrawal;
+        withdrawalTimestamps[msg.sender] = block.timestamp;
+        
+        FHE.allowThis(approvedWithdrawal);
+        FHE.allow(approvedWithdrawal, msg.sender);
+
         emit WithdrawalRequested(msg.sender, handle);
+    }
+
+    function cancelStalledWithdrawal() external onlyVerifiedHuman nonReentrant {
+        require(pendingWithdrawals[msg.sender] != bytes32(0), "TuliaPay: No pending withdrawal");
+        require(block.timestamp >= withdrawalTimestamps[msg.sender] + WITHDRAWAL_TIMEOUT, "TuliaPay: Withdrawal not expired");
+
+        balances[msg.sender] = FHE.add(balances[msg.sender], lockedWithdrawalAmounts[msg.sender]);
+        FHE.allowThis(balances[msg.sender]);
+        FHE.allow(balances[msg.sender], msg.sender);
+
+        pendingWithdrawals[msg.sender] = bytes32(0);
+        withdrawalTimestamps[msg.sender] = 0;
+
+        emit WithdrawalCancelled(msg.sender);
     }
 
     function fulfillWithdrawal(address user, bytes memory abiEncodedCleartexts, bytes memory decryptionProof) external onlyOwner nonReentrant {
@@ -85,13 +110,26 @@ abstract contract TuliaEncryptedBalance is ZamaEthereumConfig, Ownable, Reentran
         uint32 decryptedAmount = abi.decode(abiEncodedCleartexts, (uint32));
         
         pendingWithdrawals[user] = bytes32(0);
+        withdrawalTimestamps[user] = 0;
         
         if (decryptedAmount > 0) {
             (bool success, ) = payable(user).call{value: decryptedAmount}("");
-            require(success, "TuliaPay: ETH transfer failed");
+            if (!success) {
+                claimablePublicETH[user] += decryptedAmount;
+            }
         }
         
         emit WithdrawalCompleted(user, decryptedAmount);
+    }
+
+    function claimPublicETH() external nonReentrant {
+        uint256 amount = claimablePublicETH[msg.sender];
+        require(amount > 0, "TuliaPay: No ETH to claim");
+        
+        claimablePublicETH[msg.sender] = 0;
+        
+        (bool success, ) = payable(msg.sender).call{value: amount}("");
+        require(success, "TuliaPay: Claim failed");
     }
 
     function _increaseBalance(address user, euint32 amount) internal {
