@@ -21,13 +21,13 @@ const ValueCard = ({ icon: Icon, title, desc, index }: ValueCardProps) => (
     whileInView={{ y: 0, opacity: 1 }}
     viewport={{ once: true }}
     transition={{ delay: index * 0.1 }}
-    className="p-12 rounded-[2.5rem] border border-white/5 bg-slate-900/60 hover:border-brand/30 hover:bg-slate-900 transition-all space-y-6 group"
+    className="glass-panel p-8 rounded-2xl border border-white/5 bg-slate-900/40 hover:border-brand/30 hover:bg-slate-900/60 transition-all duration-300 space-y-5 group"
   >
-    <div className="w-16 h-16 bg-slate-950 rounded-2xl border border-white/5 flex items-center justify-center group-hover:scale-110 transition-transform">
-      <Icon size={32} className="text-brand-light" />
+    <div className="w-14 h-14 bg-slate-900 rounded-xl border border-white/5 shadow-inner flex items-center justify-center group-hover:border-brand/30 group-hover:bg-brand/10 transition-all">
+      <Icon size={22} className="text-brand-light group-hover:scale-110 transition-transform" />
     </div>
-    <h3 className="text-3xl font-black text-white tracking-tight">{title}</h3>
-    <p className="text-slate-400 leading-relaxed font-medium">
+    <h3 className="text-xl font-black text-white tracking-tight">{title}</h3>
+    <p className="text-slate-400 leading-relaxed font-medium text-sm">
       {desc}
     </p>
   </motion.div>
@@ -71,15 +71,15 @@ export default function AboutPage() {
                 initial={{ x: -40, opacity: 0 }}
                 whileInView={{ x: 0, opacity: 1 }}
                 viewport={{ once: true }}
-                className="p-12 md:p-16 glass-panel space-y-8 relative overflow-hidden group bg-slate-900/40 border-white/5 rounded-[2.5rem]"
+                className="glass-panel p-10 md:p-14 space-y-6 relative overflow-hidden group bg-slate-900/40 border border-white/5 hover:border-brand/30 hover:bg-slate-900/60 transition-all duration-300 rounded-2xl"
             >
                 <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-brand/10 rounded-full blur-2xl group-hover:bg-brand/20 transition-colors"></div>
-                <div className="w-20 h-20 bg-slate-950 rounded-[2rem] border border-white/5 shadow-inner flex items-center justify-center">
-                <Heart size={40} className="text-rose-400" />
+                <div className="w-14 h-14 bg-slate-900 rounded-xl border border-white/5 shadow-inner flex items-center justify-center group-hover:border-brand/30 group-hover:bg-brand/10 transition-all">
+                <Heart size={22} className="text-rose-400" />
                 </div>
-                <div className="space-y-4">
-                <h2 className="text-4xl font-black tracking-tight text-white leading-none">Global Inclusion</h2>
-                <p className="text-slate-400 text-lg leading-relaxed font-medium">
+                <div className="space-y-3">
+                <h2 className="text-2xl font-black tracking-tight text-white leading-none">Global Inclusion</h2>
+                <p className="text-slate-400 text-sm leading-relaxed font-medium">
                     TuliaPay is built on the core belief that secure, borderless payments should be accessible to all humans, regardless of location or economic background.
                 </p>
                 </div>
@@ -88,15 +88,15 @@ export default function AboutPage() {
                 initial={{ x: 40, opacity: 0 }}
                 whileInView={{ x: 0, opacity: 1 }}
                 viewport={{ once: true }}
-                className="p-12 md:p-16 glass-panel space-y-8 relative overflow-hidden group bg-slate-900/40 border-white/5 rounded-[2.5rem]"
+                className="glass-panel p-10 md:p-14 space-y-6 relative overflow-hidden group bg-slate-900/40 border border-white/5 hover:border-brand/30 hover:bg-slate-900/60 transition-all duration-300 rounded-2xl"
             >
                 <div className="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-emerald-400/10 rounded-full blur-2xl group-hover:bg-emerald-400/20 transition-colors"></div>
-                <div className="w-20 h-20 bg-slate-950 rounded-[2rem] border border-white/5 shadow-inner flex items-center justify-center">
-                <Target size={40} className="text-emerald-400" />
+                <div className="w-14 h-14 bg-slate-900 rounded-xl border border-white/5 shadow-inner flex items-center justify-center group-hover:border-brand/30 group-hover:bg-brand/10 transition-all">
+                <Target size={22} className="text-emerald-400" />
                 </div>
-                <div className="space-y-4">
-                <h2 className="text-4xl font-black tracking-tight text-white leading-none">Privacy Scale</h2>
-                <p className="text-slate-400 text-lg leading-relaxed font-medium">
+                <div className="space-y-3">
+                <h2 className="text-2xl font-black tracking-tight text-white leading-none">Privacy Scale</h2>
+                <p className="text-slate-400 text-sm leading-relaxed font-medium">
                     We bridge the gap between complex cryptography and human simplicity, making FHE (Fully Homomorphic Encryption) powerful yet effortless to use.
                 </p>
                 </div>

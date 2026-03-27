@@ -68,11 +68,11 @@ export default function TuliaPayDashboard() {
         animate={{ opacity: 1 }}
         className="flex flex-col items-center justify-center min-h-screen text-center p-6 space-y-8 bg-slate-950"
       >
-        <div className="p-4 bg-brand rounded-full shadow-lg shadow-brand/40 animate-pulse">
-          <Shield size={64} className="text-white" />
+        <div className="p-5 bg-brand/10 border border-brand/30 rounded-2xl shadow-lg shadow-brand/10">
+          <Shield size={56} className="text-brand-light" />
         </div>
         <div className="space-y-4 max-w-md">
-          <h1 className="text-6xl font-black bg-clip-text text-transparent bg-gradient-to-r from-brand-light to-emerald-400 tracking-tighter">
+          <h1 className="text-5xl font-black bg-clip-text text-transparent bg-gradient-to-r from-brand to-brand-light tracking-tighter">
             TuliaPay
           </h1>
           <p className="text-slate-400 text-lg font-medium">

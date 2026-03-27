@@ -55,13 +55,13 @@ export const Benefits = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="glass-panel p-8 group hover:border-brand/30 transition-all duration-500 rounded-2xl md:rounded-[1.75rem]"
+              className="glass-panel p-8 group hover:border-brand/30 hover:bg-slate-900/60 transition-all duration-300 rounded-2xl bg-slate-900/40 border border-white/5"
             >
-              <div className="w-14 h-14 bg-slate-900 rounded-2xl border border-white/5 flex items-center justify-center mb-6 group-hover:bg-brand/10 transition-colors">
-                <benefit.icon className="text-brand-light group-hover:scale-110 transition-transform" />
+              <div className="w-14 h-14 bg-slate-900 rounded-xl border border-white/5 shadow-inner flex items-center justify-center mb-6 group-hover:border-brand/30 group-hover:bg-brand/10 transition-all">
+                <benefit.icon size={22} className="text-brand-light group-hover:scale-110 transition-transform" />
               </div>
-              <h3 className="text-2xl font-black text-white mb-3 tracking-tight">{benefit.title}</h3>
-              <p className="text-slate-300 leading-relaxed font-medium">{benefit.desc}</p>
+              <h3 className="text-xl font-black text-white mb-3 tracking-tight">{benefit.title}</h3>
+              <p className="text-slate-400 leading-relaxed font-medium text-sm">{benefit.desc}</p>
             </motion.div>
           ))}
         </div>

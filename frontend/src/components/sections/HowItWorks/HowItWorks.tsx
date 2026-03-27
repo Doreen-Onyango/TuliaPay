@@ -18,13 +18,13 @@ const StepCard = ({ icon: Icon, title, desc, index }: StepCardProps) => (
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true }}
     transition={{ delay: index * 0.15 }}
-    className="glass-panel group p-8 md:p-10 hover:border-brand/40 transition-all border-white/5 bg-slate-900/40 rounded-2xl md:rounded-[2rem]"
+    className="glass-panel group p-8 hover:border-brand/30 hover:bg-slate-900/60 transition-all duration-300 border border-white/5 bg-slate-900/40 rounded-2xl"
   >
-    <div className="w-16 h-16 bg-slate-950 rounded-2xl border border-white/5 flex items-center justify-center mb-8 group-hover:scale-110 group-hover:border-brand/30 transition-all shadow-inner">
-      <Icon size={32} className="text-brand-light" />
+    <div className="w-14 h-14 bg-slate-900 rounded-xl border border-white/5 shadow-inner flex items-center justify-center mb-6 group-hover:border-brand/30 group-hover:bg-brand/10 transition-all">
+      <Icon size={22} className="text-brand-light group-hover:scale-110 transition-transform" />
     </div>
-    <h3 className="text-2xl font-black text-white mb-3 tracking-tight">{index + 1}. {title}</h3>
-    <p className="text-slate-300 leading-relaxed font-medium">
+    <h3 className="text-xl font-black text-white mb-3 tracking-tight">{index + 1}. {title}</h3>
+    <p className="text-slate-400 leading-relaxed font-medium text-sm">
       {desc}
     </p>
   </motion.div>
