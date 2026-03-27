@@ -66,25 +66,39 @@ export default function TuliaPayDashboard() {
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="flex flex-col items-center justify-center min-h-screen text-center p-6 space-y-8 bg-slate-950"
+        className="flex flex-col items-center justify-center min-h-screen text-center p-6 bg-slate-950"
       >
-        <div className="p-5 bg-brand/10 border border-brand/30 rounded-2xl shadow-lg shadow-brand/10">
-          <Shield size={56} className="text-brand-light" />
-        </div>
-        <div className="space-y-4 max-w-md">
-          <h1 className="text-5xl font-black bg-clip-text text-transparent bg-gradient-to-r from-brand to-brand-light tracking-tighter">
-            TuliaPay
-          </h1>
-          <p className="text-slate-400 text-lg font-medium">
-            Your connection has timed out. Please reconnect to access your private vault.
-          </p>
-        </div>
-        <Button variant="white" size="xl" onClick={handleConnect}>
-          Reconnect Wallet
-        </Button>
-        <Link href="/" className="text-slate-500 hover:text-white transition-colors font-bold flex items-center gap-2">
-          <ArrowLeft size={18} /> Back to Homepage
-        </Link>
+        <motion.div
+          initial={{ opacity: 0, y: 20, scale: 0.97 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ delay: 0.1, duration: 0.5, ease: "easeOut" }}
+          className="glass-panel border border-white/5 bg-slate-900/40 rounded-2xl p-10 md:p-14 flex flex-col items-center gap-8 max-w-sm w-full shadow-2xl shadow-slate-950/50"
+        >
+          {/* Logo — exact navbar format, scaled up */}
+          <div className="flex items-center gap-3">
+            <div className="bg-brand p-2.5 rounded-xl shadow-lg shadow-brand/30">
+              <Shield className="text-white" size={32} />
+            </div>
+            <span className="font-black text-4xl tracking-tighter text-white">
+              <span className="text-brand">Tulia</span>Pay
+            </span>
+          </div>
+
+          <div className="space-y-3">
+            <p className="text-slate-400 font-medium leading-relaxed">
+              Your connection has timed out. Please reconnect to access your private vault.
+            </p>
+          </div>
+
+          <div className="w-full space-y-3">
+            <Button variant="primary" size="lg" fullWidth onClick={handleConnect}>
+              Reconnect Wallet
+            </Button>
+            <Link href="/" className="flex items-center justify-center gap-2 text-slate-500 hover:text-white transition-colors font-bold text-sm">
+              <ArrowLeft size={16} /> Back to Homepage
+            </Link>
+          </div>
+        </motion.div>
       </motion.div>
     );
   }
