@@ -39,11 +39,11 @@ export const Verification = ({ onVerify }: VerificationProps) => {
       <div className="flex flex-col w-full gap-4">
         <Button 
           variant="primary" 
-          size="xl" 
+          size="lg" 
           fullWidth 
           icon={UserCheck} 
           onClick={onVerify}
-          className="md:size-2xl shadow-2xl shadow-brand/20 py-6 md:py-8 text-xl md:text-2xl"
+          className="shadow-2xl shadow-brand/20 text-sm md:text-lg py-4 md:py-6 !gap-2 md:!gap-3"
         >
           Verify with World ID
         </Button>
