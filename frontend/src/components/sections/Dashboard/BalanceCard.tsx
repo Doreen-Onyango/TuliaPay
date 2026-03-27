@@ -16,7 +16,7 @@ export const BalanceCard = ({ balance, onToggle, onAction }: BalanceCardProps) =
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="relative overflow-hidden rounded-[2.5rem] md:rounded-[3rem] p-8 md:p-12 shadow-3xl shadow-brand/20 bg-gradient-to-br from-brand via-brand/90 to-brand-light border border-white/20 group"
+      className="relative overflow-hidden rounded-[2.5rem] md:rounded-[3rem] p-8 md:p-12 shadow-2xl shadow-slate-950/50 glass-panel border border-white/10 bg-slate-900/80 group"
     >
       <div className="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl group-hover:scale-110 transition-transform duration-700"></div>
       <p className="text-white/80 font-black uppercase tracking-widest text-[10px] md:text-xs flex items-center gap-2">
@@ -40,22 +40,22 @@ export const BalanceCard = ({ balance, onToggle, onAction }: BalanceCardProps) =
       
       <div className="mt-10 md:mt-14 flex flex-col sm:flex-row gap-4 md:gap-6">
         <Button 
-          variant="white" 
+          variant="primary" 
           size="lg" 
           icon={ArrowDownToLine} 
           fullWidth 
           onClick={() => onAction('deposit')}
-          className="md:text-xl py-4 md:py-5"
+          className="md:text-xl py-4 md:py-5 shadow-2xl shadow-brand/20"
         >
           Deposit
         </Button>
         <Button 
-          variant="glass" 
+          variant="outline" 
           size="lg" 
           icon={Send} 
           fullWidth 
           onClick={() => onAction('send')}
-          className="md:text-xl py-4 md:py-5"
+          className="md:text-xl py-4 md:py-5 bg-slate-800/50"
         >
           Send
         </Button>

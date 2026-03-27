@@ -1,19 +1,19 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand: #7c3aed;
-  --color-brand-light: #a78bfa;
-  --color-dark: #0f172a;
-  --color-panel: rgba(30, 41, 59, 0.7);
+  --color-brand: #f59e0b; /* Amber 600 */
+  --color-brand-light: #fbbf24; /* Amber 400 */
+  --color-dark: #0f172a; /* Slate 900 */
+  --color-panel: rgba(15, 23, 42, 0.7);
 }
 
 body {
-  background-color: #020617; /* slate-950 */
+  background-color: #020617; /* Slate 950 */
   color: #f8fafc;
   background-image: 
-    radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
-    radial-gradient(at 50% 0%, hsla(225,39%,30%,0.2) 0, transparent 50%), 
-    radial-gradient(at 100% 0%, hsla(339,49%,30%,0.2) 0, transparent 50%);
+    radial-gradient(at 0% 0%, hsla(220,40%,8%,1) 0, transparent 50%), 
+    radial-gradient(at 50% 0%, hsla(160,50%,20%,0.2) 0, transparent 50%), 
+    radial-gradient(at 100% 0%, hsla(45,80%,30%,0.15) 0, transparent 50%);
   background-attachment: fixed;
   font-family: 'Inter', sans-serif;
   position: relative;

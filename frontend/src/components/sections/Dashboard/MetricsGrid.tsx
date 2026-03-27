@@ -13,8 +13,8 @@ interface MetricsGridProps {
 export const MetricsGrid = ({ metrics }: MetricsGridProps) => {
   const data = [
     { label: "Verified Humans", value: metrics.totalHumans, color: "text-white" },
-    { label: "Vault Privacy", value: "Locked", color: "text-emerald-400" },
-    { label: "Active Channels", value: metrics.activeChannels, color: "text-white" }
+    { label: "Vault Privacy", value: "SECURE", color: "text-emerald-400" },
+    { label: "Real Time Sync", value: `+${metrics.activeChannels}%`, color: "text-emerald-400" }
   ]
 
   return (

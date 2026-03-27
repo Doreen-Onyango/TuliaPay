@@ -39,7 +39,9 @@ export const Navbar = () => {
           <div className="bg-brand p-1.5 rounded-xl shadow-lg shadow-brand/20 group-hover:bg-brand-light transition-colors">
             <Shield className="text-white" size={24} />
           </div>
-          <span className="font-black text-2xl tracking-tighter text-white">TuliaPay</span>
+          <span className="font-black text-2xl tracking-tighter text-white">
+            <span className="text-brand">Tulia</span>Pay
+          </span>
         </Link>
 
         {/* Desktop Nav */}
