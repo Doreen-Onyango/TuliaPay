@@ -24,6 +24,7 @@ import { WalletDropdown } from '../../components/sections/Dashboard/WalletDropdo
 import { BalanceCard } from '../../components/sections/Dashboard/BalanceCard';
 import { TransactionForm, TransactionOverlay } from '../../components/sections/Dashboard/TransactionForm';
 import { MetricsGrid } from '../../components/sections/Dashboard/MetricsGrid';
+import { ActiveWithdrawals } from '../../components/sections/Dashboard/ActiveWithdrawals';
 
 import { Verification } from '../../components/sections/Dashboard/Verification';
 
@@ -47,16 +48,49 @@ export default function TuliaPayDashboard() {
     setBalance(balance === "****" ? "1,240.50" : "****");
   };
 
+  const [hasPendingWithdrawal, setHasPendingWithdrawal] = React.useState(false);
+  const [hasClaimableETH, setHasClaimableETH] = React.useState(false);
+
+  // Mock checking pending state when connecting
+  React.useEffect(() => {
+    if (walletAddress) {
+      setHasPendingWithdrawal(true);
+      setHasClaimableETH(true);
+    }
+  }, [walletAddress]);
+
+  const handleCancelWithdrawal = async () => {
+    setTxStatus("processing");
+    setTxMessage("Cancelling stalled withdrawal... Executing encrypted reversal.");
+    await new Promise(r => setTimeout(r, 2000));
+    setTxStatus("success");
+    setTxMessage("Withdrawal cancelled. Funds fully reinstated to your vault.");
+    setHasPendingWithdrawal(false);
+    setTimeout(() => setTxStatus("idle"), 3000);
+  };
+
+  const handleClaimETH = async () => {
+    setTxStatus("processing");
+    setTxMessage("Pushing trapped ETH balance into your address natively...");
+    await new Promise(r => setTimeout(r, 2000));
+    setTxStatus("success");
+    setTxMessage("ETH securely claimed and deposited into your account.");
+    setHasClaimableETH(false);
+    setTimeout(() => setTxStatus("idle"), 3000);
+  };
+
   const handleTransactionSubmit = async (data: { amount: string, recipient?: string }) => {
     setTxStatus("processing");
-    setTxMessage(activeTab === "deposit" ? "Generating local FHE proof..." : "Encrypting outbound payload...");
+    setTxMessage(activeTab === "deposit" ? "Generating local FHE proof..." : "Encrypting outbound payload with nonce...");
     await new Promise(r => setTimeout(r, 2000));
     setTxMessage("Relaying encrypted payload to fhEVM...");
     await new Promise(r => setTimeout(r, 2500));
     setTxStatus("success");
     setTxMessage(activeTab === "deposit" 
         ? `Successfully deposited ${data.amount} tUSD into vault.`
-        : `Securely sent ${data.amount} tUSD to recipient.`
+        : activeTab === 'withdraw'
+          ? `Withdrawal request for ${data.amount} queued for KMS fulfillment.`
+          : `Securely sent ${data.amount} tUSD to recipient.`
     );
     setTimeout(() => { setTxStatus("idle"); setActiveTab("dashboard"); }, 3000);
   };
@@ -147,11 +181,17 @@ export default function TuliaPayDashboard() {
                 className="space-y-12"
               >
                 <BalanceCard balance={balance} onToggle={handleToggleBalance} onAction={setActiveTab} />
+                <ActiveWithdrawals 
+                  hasPending={hasPendingWithdrawal} 
+                  hasClaimable={hasClaimableETH} 
+                  onCancel={handleCancelWithdrawal} 
+                  onClaim={handleClaimETH} 
+                />
                 <MetricsGrid metrics={metrics} />
               </motion.div>
             )}
 
-            {(activeTab === "deposit" || activeTab === "send") && (
+            {(activeTab === "deposit" || activeTab === "send" || activeTab === "withdraw") && (
               <TransactionForm 
                 type={activeTab} 
                 onBack={() => setActiveTab("dashboard")} 

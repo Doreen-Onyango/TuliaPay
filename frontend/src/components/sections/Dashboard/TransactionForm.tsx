@@ -11,7 +11,7 @@ interface TransactionData {
 }
 
 interface TransactionFormProps {
-  type: 'deposit' | 'send'
+  type: 'deposit' | 'send' | 'withdraw'
   onBack: () => void
   onSubmit: (data: TransactionData) => Promise<void>
 }
@@ -83,7 +83,7 @@ export const TransactionForm = ({ type, onBack, onSubmit }: TransactionFormProps
           </div>
 
           <Button variant="white" size="xl" fullWidth type="submit">
-            {type === 'deposit' ? "Sign Deposit" : "Confirm Send"}
+            {type === 'deposit' ? "Sign Deposit" : type === 'withdraw' ? "Request Withdrawal" : "Confirm Send"}
           </Button>
         </form>
       </div>
