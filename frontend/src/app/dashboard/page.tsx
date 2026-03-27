@@ -21,7 +21,7 @@ import {
 
 // Modular Components
 import { Button } from '../../components/ui/Button';
-import { WalletDropdown } from '../../components/sections/Dashboard/WalletDropdown';
+import { Navbar } from '../../components/layout/Navbar';
 import { BalanceCard } from '../../components/sections/Dashboard/BalanceCard';
 import { TransactionForm, TransactionOverlay } from '../../components/sections/Dashboard/TransactionForm';
 import { MetricsGrid } from '../../components/sections/Dashboard/MetricsGrid';
@@ -180,28 +180,7 @@ export default function TuliaPayDashboard() {
       transition={{ duration: 0.5 }}
       className="min-h-screen pb-20 bg-slate-950 text-slate-200"
     >
-      {/* Top Navbar */}
-      <nav className="glass-panel sticky top-0 z-50 rounded-none border-t-0 border-x-0 border-b border-white/5 py-4 px-6 md:px-10 flex justify-between items-center bg-slate-950/80 backdrop-blur-xl !overflow-visible">
-        <Link href="/" className="flex items-center gap-3 cursor-pointer group active:scale-95 transition-transform">
-          <div className="bg-brand p-1.5 rounded-lg shadow-lg shadow-brand/20 group-hover:bg-brand-light transition-colors">
-            <Shield className="text-white" size={24} />
-          </div>
-          <span className="font-black text-2xl tracking-tighter text-white">
-            <span className="text-brand">Tulia</span>Pay
-          </span>
-        </Link>
-        
-        <div className="flex items-center gap-6 font-bold">
-          {isVerified && (
-            <div className="hidden md:flex items-center gap-2 bg-emerald-500/10 text-emerald-400 px-4 py-2 rounded-xl border border-emerald-500/20 text-sm">
-              <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></div>
-              Human Verified
-            </div>
-          )}
-          
-          <WalletDropdown address={walletAddress} onDisconnect={handleDisconnect} />
-        </div>
-      </nav>
+      <Navbar variant="dashboard" onDisconnect={handleDisconnect} />
 
       <main className="max-w-5xl mx-auto mt-12 md:mt-20 p-6 md:p-10 space-y-12 md:space-y-20">
         <TransactionOverlay status={txStatus} message={txMessage} />
