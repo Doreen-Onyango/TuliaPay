@@ -4,7 +4,7 @@ import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { ArrowRight, Lock, ShieldCheck, Zap, Globe, LucideIcon } from 'lucide-react'
+import { ArrowRight, ShieldCheck, Zap, Globe, LucideIcon } from 'lucide-react'
 import { Button } from '../../ui/Button'
 import { Container, Section } from '../../ui/LayoutUtils'
 
@@ -97,21 +97,6 @@ export const Hero = () => {
               />
               <div className="absolute inset-0 bg-gradient-to-tr from-brand/20 to-transparent pointer-events-none" />
             </div>
-
-            {/* Floating Badges */}
-            <motion.div 
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute -top-6 -right-4 md:-top-12 md:-right-8 glass-panel p-3 md:p-4 rounded-lg md:rounded-xl border-brand/30 shadow-2xl flex items-center gap-3 z-20 scale-90 md:scale-100"
-            >
-              <div className="bg-brand/20 p-2 rounded-lg">
-                <Lock size={18} className="text-brand-light" />
-              </div>
-              <div className="text-left">
-                <div className="text-[10px] font-black uppercase tracking-wider text-brand-light">Status</div>
-                <div className="text-sm font-bold text-white">Full Privacy</div>
-              </div>
-            </motion.div>
           </div>
         </motion.div>
       </Container>
