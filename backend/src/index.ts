@@ -4,7 +4,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import { ethers } from "ethers";
 import dotenv from "dotenv";
-import { signRequest } from "@worldcoin/idkit-core/signing";
+import { signRequest } from "@worldcoin/idkit-core";
 
 // Load default .env and then override with .env.local if present (local dev)
 dotenv.config();
