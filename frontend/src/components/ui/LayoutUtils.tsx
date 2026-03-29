@@ -3,7 +3,7 @@ import React from 'react'
 interface ContainerProps {
   children: React.ReactNode
   className?: string
-  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '7xl' | 'full'
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '5xl' | '7xl' | 'full'
 }
 
 export const Container = ({ children, className = '', maxWidth = '7xl' }: ContainerProps) => {
@@ -13,12 +13,13 @@ export const Container = ({ children, className = '', maxWidth = '7xl' }: Contai
     lg: 'max-w-lg',
     xl: 'max-w-xl',
     '2xl': 'max-w-2xl',
+    '5xl': 'max-w-5xl',
     '7xl': 'max-w-7xl',
     full: 'max-w-none'
   }
 
   return (
-    <div className={`mx-auto w-full px-6 md:px-12 ${maxWidths[maxWidth]} ${className}`}>
+    <div className={`mx-auto w-full ${!className.includes('px-') ? 'px-6 md:px-12' : ''} ${maxWidths[maxWidth]} ${className}`}>
       {children}
     </div>
   )

@@ -15,15 +15,17 @@ import {
   activeTabAtom,
   globalMetricsAtom,
   transactionStatusAtom,
-  transactionMessageAtom
+  transactionMessageAtom,
+  userNonceAtom
 } from '../../store';
 
 // Modular Components
 import { Button } from '../../components/ui/Button';
-import { WalletDropdown } from '../../components/sections/Dashboard/WalletDropdown';
+import { Navbar } from '../../components/layout/Navbar';
 import { BalanceCard } from '../../components/sections/Dashboard/BalanceCard';
 import { TransactionForm, TransactionOverlay } from '../../components/sections/Dashboard/TransactionForm';
 import { MetricsGrid } from '../../components/sections/Dashboard/MetricsGrid';
+import { ActiveWithdrawals } from '../../components/sections/Dashboard/ActiveWithdrawals';
 
 import { Verification } from '../../components/sections/Dashboard/Verification';
 
@@ -47,19 +49,87 @@ export default function TuliaPayDashboard() {
     setBalance(balance === "****" ? "1,240.50" : "****");
   };
 
+  const [hasPendingWithdrawal, setHasPendingWithdrawal] = React.useState(false);
+  const [hasClaimableETH, setHasClaimableETH] = React.useState(false);
+
+  // In production, you would fetch these from the blockchain on load:
+  // const pending = await contract.pendingWithdrawals(walletAddress);
+  // const claimable = await contract.claimablePublicETH(walletAddress);
+  React.useEffect(() => {
+    if (walletAddress) {
+      // Mock fetching blockchain state: default to FALSE for clean UI
+      setHasPendingWithdrawal(false);
+      setHasClaimableETH(false);
+    }
+  }, [walletAddress]);
+
+  const handleCancelWithdrawal = async () => {
+    setTxStatus("processing");
+    setTxMessage("Cancelling stalled withdrawal... Executing encrypted reversal.");
+    await new Promise(r => setTimeout(r, 2000));
+    setTxStatus("success");
+    setTxMessage("Withdrawal cancelled. Funds fully reinstated to your vault.");
+    setHasPendingWithdrawal(false);
+    setTimeout(() => setTxStatus("idle"), 3000);
+  };
+
+  const handleClaimETH = async () => {
+    setTxStatus("processing");
+    setTxMessage("Pushing trapped ETH balance into your address natively...");
+    await new Promise(r => setTimeout(r, 2000));
+    setTxStatus("success");
+    setTxMessage("ETH securely claimed and deposited into your account.");
+    setHasClaimableETH(false);
+    setTimeout(() => setTxStatus("idle"), 3000);
+  };
+
+  const [userNonce, setUserNonce] = useAtom(userNonceAtom);
+
   const handleTransactionSubmit = async (data: { amount: string, recipient?: string }) => {
     setTxStatus("processing");
-    setTxMessage(activeTab === "deposit" ? "Generating local FHE proof..." : "Encrypting outbound payload...");
+    const currentNonce = userNonce;
+    setTxMessage(activeTab === "deposit" 
+      ? "Generating local FHE proof..." 
+      : `Encrypting outbound payload with nonce #${currentNonce}...`
+    );
+    
     await new Promise(r => setTimeout(r, 2000));
     setTxMessage("Relaying encrypted payload to fhEVM...");
     await new Promise(r => setTimeout(r, 2500));
+    
     setTxStatus("success");
     setTxMessage(activeTab === "deposit" 
         ? `Successfully deposited ${data.amount} tUSD into vault.`
-        : `Securely sent ${data.amount} tUSD to recipient.`
+        : activeTab === 'withdraw'
+          ? `Withdrawal request for ${data.amount} queued with nonce #${currentNonce}.`
+          : `Securely sent ${data.amount} tUSD to recipient (Nonce #${currentNonce}).`
     );
-    setTimeout(() => { setTxStatus("idle"); setActiveTab("dashboard"); }, 3000);
+
+    // Increment nonce for the next non-deposit transaction
+    if (activeTab !== "deposit") {
+      setUserNonce((prev: number) => prev + 1);
+    }
+
+    setTimeout(() => { 
+      setTxStatus("idle"); 
+      setActiveTab("dashboard"); 
+      if (activeTab === 'withdraw') {
+        setHasPendingWithdrawal(true);
+      }
+    }, 3000);
   };
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        {/* Transparent initial SSR mount to prevent hydration flickering */}
+      </div>
+    );
+  }
 
   if (!walletAddress) {
     return (
@@ -110,28 +180,7 @@ export default function TuliaPayDashboard() {
       transition={{ duration: 0.5 }}
       className="min-h-screen pb-20 bg-slate-950 text-slate-200"
     >
-      {/* Top Navbar */}
-      <nav className="glass-panel sticky top-0 z-50 rounded-none border-t-0 border-x-0 border-b border-white/5 py-4 px-6 md:px-10 flex justify-between items-center bg-slate-950/80 backdrop-blur-xl !overflow-visible">
-        <Link href="/" className="flex items-center gap-3 cursor-pointer group active:scale-95 transition-transform">
-          <div className="bg-brand p-1.5 rounded-lg shadow-lg shadow-brand/20 group-hover:bg-brand-light transition-colors">
-            <Shield className="text-white" size={24} />
-          </div>
-          <span className="font-black text-2xl tracking-tighter text-white">
-            <span className="text-brand">Tulia</span>Pay
-          </span>
-        </Link>
-        
-        <div className="flex items-center gap-6 font-bold">
-          {isVerified && (
-            <div className="hidden md:flex items-center gap-2 bg-emerald-500/10 text-emerald-400 px-4 py-2 rounded-xl border border-emerald-500/20 text-sm">
-              <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></div>
-              Human Verified
-            </div>
-          )}
-          
-          <WalletDropdown address={walletAddress} onDisconnect={handleDisconnect} />
-        </div>
-      </nav>
+      <Navbar variant="dashboard" onDisconnect={handleDisconnect} />
 
       <main className="max-w-5xl mx-auto mt-12 md:mt-20 p-6 md:p-10 space-y-12 md:space-y-20">
         <TransactionOverlay status={txStatus} message={txMessage} />
@@ -147,11 +196,17 @@ export default function TuliaPayDashboard() {
                 className="space-y-12"
               >
                 <BalanceCard balance={balance} onToggle={handleToggleBalance} onAction={setActiveTab} />
+                <ActiveWithdrawals 
+                  hasPending={hasPendingWithdrawal} 
+                  hasClaimable={hasClaimableETH} 
+                  onCancel={handleCancelWithdrawal} 
+                  onClaim={handleClaimETH} 
+                />
                 <MetricsGrid metrics={metrics} />
               </motion.div>
             )}
 
-            {(activeTab === "deposit" || activeTab === "send") && (
+            {(activeTab === "deposit" || activeTab === "send" || activeTab === "withdraw") && (
               <TransactionForm 
                 type={activeTab} 
                 onBack={() => setActiveTab("dashboard")} 

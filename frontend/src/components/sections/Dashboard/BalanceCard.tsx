@@ -8,7 +8,7 @@ import { Button } from '../../ui/Button'
 interface BalanceCardProps {
   balance: string
   onToggle: () => void
-  onAction: (tab: 'deposit' | 'send') => void
+  onAction: (tab: 'deposit' | 'send' | 'withdraw') => void
 }
 
 export const BalanceCard = ({ balance, onToggle, onAction }: BalanceCardProps) => {
@@ -48,6 +48,16 @@ export const BalanceCard = ({ balance, onToggle, onAction }: BalanceCardProps) =
           className="md:text-xl py-4 md:py-5 shadow-2xl shadow-brand/20"
         >
           Deposit
+        </Button>
+        <Button 
+          variant="outline" 
+          size="lg" 
+          icon={ArrowDownToLine} 
+          fullWidth 
+          onClick={() => onAction('withdraw')}
+          className="md:text-xl py-4 md:py-5 bg-slate-800/50"
+        >
+          Withdraw
         </Button>
         <Button 
           variant="outline" 
