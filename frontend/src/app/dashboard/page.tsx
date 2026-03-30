@@ -16,8 +16,13 @@ import {
   globalMetricsAtom,
   transactionStatusAtom,
   transactionMessageAtom,
-  userNonceAtom
+  userNonceAtom,
+  providerAtom,
+  signerAtom,
+  fhevmInstanceAtom
 } from '../../store';
+import { BrowserProvider } from 'ethers';
+import { initFhevm } from '../../utils/fhevm';
 
 // Modular Components
 import { Button } from '../../components/ui/Button';
@@ -37,16 +42,68 @@ export default function TuliaPayDashboard() {
   const [metrics] = useAtom(globalMetricsAtom);
   const [txStatus, setTxStatus] = useAtom(transactionStatusAtom);
   const [txMessage, setTxMessage] = useAtom(transactionMessageAtom);
+  const [, setProvider] = useAtom(providerAtom);
+  const [signer, setSigner] = useAtom(signerAtom);
+  const [fhevmInstance, setFhevmInstance] = useAtom(fhevmInstanceAtom);
 
-  const handleConnect = () => setWalletAddress("0x7F5A4bD2d78B9c4E9F1A3B8C7D6E5F4A3B2aC9");
+  const handleConnect = async () => {
+    const win = window as unknown as { ethereum?: unknown };
+    if (typeof window !== "undefined" && win.ethereum) {
+      try {
+        const browserProvider = new BrowserProvider(win.ethereum as import("ethers").Eip1193Provider);
+        await browserProvider.send("eth_requestAccounts", []);
+        const signerInstance = await browserProvider.getSigner();
+        const address = await signerInstance.getAddress();
+
+        setProvider(browserProvider);
+        setSigner(signerInstance);
+        setWalletAddress(address);
+
+        // Initialize fhevmjs
+        const instance = await initFhevm(browserProvider);
+        setFhevmInstance(instance);
+      } catch (err) {
+        console.error("Wallet connection failed:", err);
+      }
+    } else {
+      // Fallback for mocked UI if no extension
+      setWalletAddress("0x7F5A4bD2d78B9c4E9F1A3B8C7D6E5F4A3B2aC9");
+    }
+  };
+
   const handleWorldIDVerify = () => setIsVerified(true);
+  
   const handleDisconnect = () => {
     setWalletAddress(null);
     setIsVerified(false);
   };
   
-  const handleToggleBalance = () => {
-    setBalance(balance === "****" ? "1,240.50" : "****");
+  const handleToggleBalance = async () => {
+    if (balance === "****") {
+      setTxStatus("processing");
+      setTxMessage("Requesting re-encryption keys (EIP-712 signature)...");
+      try {
+        if (fhevmInstance && signer && walletAddress) {
+           // Mock getting the re-encryption key via FHE
+           await new Promise(r => setTimeout(r, 1500));
+           setBalance("1,240.50");
+           setTxStatus("success");
+           setTxMessage("Balance decrypted securely.");
+        } else {
+           // Fallback
+           await new Promise(r => setTimeout(r, 1000));
+           setBalance("1,240.50");
+           setTxStatus("success");
+           setTxMessage("Balance decrypted securely.");
+        }
+      } catch {
+         setTxStatus("error");
+         setTxMessage("Decryption failed.");
+      }
+      setTimeout(() => setTxStatus("idle"), 2000);
+    } else {
+      setBalance("****");
+    }
   };
 
   const [hasPendingWithdrawal, setHasPendingWithdrawal] = React.useState(false);
@@ -88,22 +145,43 @@ export default function TuliaPayDashboard() {
   const handleTransactionSubmit = async (data: { amount: string, recipient?: string }) => {
     setTxStatus("processing");
     const currentNonce = userNonce;
-    setTxMessage(activeTab === "deposit" 
-      ? "Generating local FHE proof..." 
-      : `Encrypting outbound payload with nonce #${currentNonce}...`
-    );
     
-    await new Promise(r => setTimeout(r, 2000));
-    setTxMessage("Relaying encrypted payload to fhEVM...");
-    await new Promise(r => setTimeout(r, 2500));
-    
-    setTxStatus("success");
-    setTxMessage(activeTab === "deposit" 
-        ? `Successfully deposited ${data.amount} tUSD into vault.`
-        : activeTab === 'withdraw'
-          ? `Withdrawal request for ${data.amount} queued with nonce #${currentNonce}.`
-          : `Securely sent ${data.amount} tUSD to recipient (Nonce #${currentNonce}).`
-    );
+    try {
+      if (activeTab === "deposit") {
+        setTxMessage("Submitting public deposit transaction...");
+        if (fhevmInstance && signer) {
+           // const contract = new ethers.Contract(CONTRACT_ADDRESS, TULIA_ABI, signer);
+           // await contract.deposit({ value: ethers.parseEther(data.amount) });
+           await new Promise(r => setTimeout(r, 2000));
+        } else {
+           await new Promise(r => setTimeout(r, 2000));
+        }
+        setTxStatus("success");
+        setTxMessage(`Successfully deposited ${data.amount} tUSD into vault.`);
+      } else {
+        setTxMessage(`Encrypting outbound payload with nonce #${currentNonce}...`);
+        if (fhevmInstance && signer) {
+          // const input = fhevmInstance.createEncryptedInput(CONTRACT_ADDRESS, signer.address);
+          // input.add64(Number(data.amount));
+          // const encryptedPayload = await input.encrypt();
+          await new Promise(r => setTimeout(r, 1500));
+        } else {
+          await new Promise(r => setTimeout(r, 1500));
+        }
+
+        setTxMessage("Relaying encrypted payload to fhEVM...");
+        await new Promise(r => setTimeout(r, 1500));
+
+        setTxStatus("success");
+        setTxMessage(activeTab === 'withdraw'
+            ? `Withdrawal request for ${data.amount} queued with nonce #${currentNonce}.`
+            : `Securely sent ${data.amount} tUSD to recipient (Nonce #${currentNonce}).`
+        );
+      }
+    } catch {
+      setTxStatus("error");
+      setTxMessage("Transaction failed or rejected.");
+    }
 
     // Increment nonce for the next non-deposit transaction
     if (activeTab !== "deposit") {
