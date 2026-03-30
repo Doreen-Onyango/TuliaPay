@@ -1,5 +1,12 @@
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
+import type { FhevmInstance } from 'fhevmjs';
+import type { BrowserProvider, Signer } from 'ethers';
+
+// FHEVM & Ethers.js State
+export const providerAtom = atom<BrowserProvider | null>(null);
+export const signerAtom = atom<Signer | null>(null);
+export const fhevmInstanceAtom = atom<FhevmInstance | null>(null);
 
 // Wallet & Auth
 export const walletAddressAtom = atomWithStorage<string | null>('tulia_wallet', null);
