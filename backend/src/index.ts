@@ -4,8 +4,15 @@ import helmet from "helmet";
 import morgan from "morgan";
 import { ethers } from "ethers";
 import dotenv from "dotenv";
+import fs from "fs";
+import path from "path";
 
-dotenv.config();
+// Load .env.local if it exists, otherwise fallback to .env
+if (fs.existsSync(path.resolve(__dirname, "../.env.local"))) {
+  dotenv.config({ path: path.resolve(__dirname, "../.env.local") });
+} else {
+  dotenv.config();
+}
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -20,19 +27,17 @@ app.use(express.json());
 // WEB3 SETUP (Relayer Wallet on fhEVM Network)
 // ------------------------------------------------------------------------
 const RPC_URL = process.env.RPC_URL || "http://127.0.0.1:8545";
-const PRIVATE_KEY = process.env.RELAYER_PRIVATE_KEY || "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
-const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS || "0x0000000000000000000000000000000000000000";
+const PRIVATE_KEY = process.env.BACKEND_PRIVATE_KEY || process.env.RELAYER_PRIVATE_KEY || "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
+// Use the new env variable name, fallback to old one
+const CONTRACT_ADDRESS = process.env.TULIA_PROTOCOL_ADDRESS || process.env.CONTRACT_ADDRESS || "0x0000000000000000000000000000000000000000";
 
 const provider = new ethers.JsonRpcProvider(RPC_URL);
 const relayerWallet = new ethers.Wallet(PRIVATE_KEY, provider);
 
-// Unified ABI for TuliaProtocol (including Identity & Balance modules)
-const TULIA_ABI = [
-  "function verifyAndRegister(uint256 root, uint256 nullifierHash, uint256[8] calldata proof) external",
-  "function deposit() external payable",
-  "function sendEncrypted(address to, bytes calldata encryptedAmount, bytes calldata inputProof) external",
-];
-const protocolContract = new ethers.Contract(CONTRACT_ADDRESS, TULIA_ABI, relayerWallet);
+// Import the ABI we just saved from Remix
+import TuliaProtocolABI from "../abis/TuliaProtocol.json";
+
+const protocolContract = new ethers.Contract(CONTRACT_ADDRESS, TuliaProtocolABI, relayerWallet);
 
 // ------------------------------------------------------------------------
 // ENDPOINTS
