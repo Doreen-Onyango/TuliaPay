@@ -1,7 +1,12 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  transpilePackages: [
+    "@worldcoin/idkit",
+    "@worldcoin/idkit-core"
+  ],
+  serverExternalPackages: ["fhevmjs"]
 };
 
 export default nextConfig;
