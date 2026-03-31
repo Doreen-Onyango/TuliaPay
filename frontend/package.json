@@ -1,6 +1,7 @@
 {
-  "name": "frontend",
-  "version": "0.1.0",
+  "name": "tuliapay-frontend",
+  "version": "1.0.0",
+  "description": "Premium Next.js dashboard for the TuliaPay protocol",
   "private": true,
   "scripts": {
     "dev": "next dev",
