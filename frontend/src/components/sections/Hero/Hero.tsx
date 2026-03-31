@@ -9,6 +9,8 @@ import { ArrowRight, ShieldCheck, Zap, Globe, LucideIcon } from 'lucide-react'
 import { Button } from '../../ui/Button'
 import { Container, Section } from '../../ui/LayoutUtils'
 import { connectWallet, getTuliaProtocolContract } from '@/utils/contractConnection'
+import { useAtom } from 'jotai'
+import { walletAddressAtom } from '@/store'
 
 const TrustMarker = ({ icon: Icon, text }: { icon: LucideIcon, text: string }) => (
   <div className="flex items-center gap-2 text-slate-300 font-bold text-xs uppercase tracking-widest">
@@ -18,7 +20,7 @@ const TrustMarker = ({ icon: Icon, text }: { icon: LucideIcon, text: string }) =
 )
 
 export const Hero = () => {
-  const [wallet, setWallet] = useState<string | null>(null);
+  const [wallet, setWallet] = useAtom(walletAddressAtom);
   const router = useRouter();
 
   const handleConnect = async () => {
