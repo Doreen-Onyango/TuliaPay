@@ -218,6 +218,10 @@ export default function TuliaPayDashboard() {
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => {
     setMounted(true);
+    // Auto-trigger connection if not already connected on refresh
+    if (!walletAddress) {
+      handleConnect();
+    }
   }, []);
 
   if (!mounted) {
