@@ -5,6 +5,8 @@ import { IDKit, IDKitErrorCodes, orbLegacy } from "@worldcoin/idkit-core";
 import { useAtom } from "jotai";
 import { isVerifiedHumanAtom } from "../store";
 import QRCode from "react-qr-code";
+import { Button } from "../components/ui/Button";
+import { UserCheck, Shield, Copy, ExternalLink, RefreshCw } from "lucide-react";
 
 type VerifyState = "idle" | "requesting" | "polling" | "verified" | "error";
 
@@ -133,33 +135,54 @@ export function WorldIDVerifyButton() {
           : "Verify with World ID";
 
   return (
-    <div className="w-full space-y-3">
-      <button
+    <div className="w-full space-y-6">
+      <Button
         onClick={handleClick}
         disabled={isVerified || state === "requesting" || state === "polling"}
-        className="w-full py-5 bg-brand text-white font-black rounded-2xl hover:bg-brand-light transition-all flex items-center justify-center gap-4 text-xl disabled:opacity-70 disabled:cursor-not-allowed"
+        variant={state === "verified" ? "secondary" : "primary"}
+        size="lg"
+        fullWidth
+        icon={state === "verified" ? UserCheck : state === "error" ? RefreshCw : Shield}
+        isLoading={state === "requesting" || state === "polling"}
+        className="py-6 text-xl shadow-2xl shadow-brand/20 rounded-2xl"
       >
         {label}
-      </button>
+      </Button>
+
       {connectorURI && (
-        <div className="rounded-2xl border border-white/10 bg-slate-950/40 backdrop-blur-md p-5 space-y-4">
-          <p className="text-sm text-slate-300 font-bold text-center">
-            Scan this QR with World App (or open the link) to complete verification.
-          </p>
-          <div className="bg-white p-4 rounded-2xl w-fit mx-auto">
-            <QRCode value={connectorURI} size={180} />
+        <div className="rounded-[2rem] border border-white/5 bg-slate-900/40 backdrop-blur-xl p-8 space-y-6 shadow-3xl relative overflow-hidden group">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand to-transparent opacity-30 animate-pulse"></div>
+          
+          <div className="space-y-2 text-center">
+            <h4 className="text-white font-black text-lg tracking-tight">Scan Secure QR</h4>
+            <p className="text-slate-400 text-xs font-medium px-4">
+              Open the World App on your mobile device and scan the code below to finalize your personhood verification.
+            </p>
           </div>
-          <div className="flex flex-col gap-2">
-            <a
-              href={connectorURI}
-              target="_blank"
-              rel="noreferrer"
-              className="w-full py-3 bg-white text-slate-950 font-black rounded-xl text-center"
+
+          <div className="bg-white p-6 rounded-3xl w-fit mx-auto shadow-inner border-8 border-slate-950/20 group-hover:scale-[1.02] transition-transform duration-500">
+            <QRCode 
+              value={connectorURI} 
+              size={200} 
+              fgColor="#0f172a" 
+              level="H"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Button
+              variant="white"
+              size="md"
+              className="!rounded-xl text-xs gap-2"
+              onClick={() => window.open(connectorURI, "_blank")}
+              icon={ExternalLink}
             >
-              Open in World App
-            </a>
-            <button
-              type="button"
+              Open App
+            </Button>
+            <Button
+              variant="glass"
+              size="md"
+              className="!rounded-xl text-xs gap-2 border-white/5 hover:bg-white/10"
               onClick={async () => {
                 try {
                   await navigator.clipboard.writeText(connectorURI);
@@ -167,16 +190,32 @@ export function WorldIDVerifyButton() {
                   // ignore
                 }
               }}
-              className="w-full py-3 bg-slate-900 text-white font-black rounded-xl border border-slate-800"
+              icon={Copy}
             >
-              Copy link
-            </button>
+              Copy Link
+            </Button>
           </div>
         </div>
       )}
+
       {error && (
-        <p className="text-sm text-rose-400 font-medium text-center">{error}</p>
+        <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 animate-in fade-in slide-in-from-top-2">
+          <p className="text-sm text-rose-400 font-bold text-center flex items-center justify-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+            {error}
+          </p>
+        </div>
       )}
+
+      {/* Dev Reset - helps testing the flow multiple times */}
+      <div className="pt-8 text-center">
+        <button
+          onClick={() => setIsVerified(false)}
+          className="text-[10px] text-slate-600 hover:text-rose-400 font-black uppercase tracking-[0.2em] transition-colors"
+        >
+          Reset Verification Status (Dev)
+        </button>
+      </div>
     </div>
   );
 }
