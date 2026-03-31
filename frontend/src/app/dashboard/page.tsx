@@ -39,7 +39,6 @@ export default function TuliaPayDashboard() {
   const [txMessage, setTxMessage] = useAtom(transactionMessageAtom);
 
   const handleConnect = () => setWalletAddress("0x7F5A4bD2d78B9c4E9F1A3B8C7D6E5F4A3B2aC9");
-  const handleWorldIDVerify = () => setIsVerified(true);
   const handleDisconnect = () => {
     setWalletAddress(null);
     setIsVerified(false);
@@ -186,7 +185,7 @@ export default function TuliaPayDashboard() {
         <TransactionOverlay status={txStatus} message={txMessage} />
 
         {!isVerified ? (
-           <Verification onVerify={handleWorldIDVerify} />
+           <Verification />
         ) : (
           <div className="space-y-12">
             {activeTab === "dashboard" && (
