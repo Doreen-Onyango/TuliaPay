@@ -9,8 +9,8 @@ export const signerAtom = atom<Signer | null>(null);
 export const fhevmInstanceAtom = atom<FhevmInstance | null>(null);
 
 // Wallet & Auth
-export const walletAddressAtom = atomWithStorage<string | null>('tulia_wallet', null);
-export const isVerifiedHumanAtom = atomWithStorage<boolean>('tulia_verified', false);
+export const walletAddressAtom = atom<string | null>(null);
+export const isVerifiedHumanAtom = atom<boolean>(false);
 
 // FHE Data
 export const encryptedBalanceAtom = atom<string>("****"); // Only decrypted when user opts in
