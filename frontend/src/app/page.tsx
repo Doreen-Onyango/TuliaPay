@@ -13,6 +13,7 @@ import {
   transactionMessageAtom
 } from '../store';
 import { WorldIDVerifyButton } from "./world-idkit-client";
+import { Verification } from "../components/sections/Dashboard/Verification";
 
 export default function TuliaPayDashboard() {
   const [walletAddress, setWalletAddress] = useAtom(walletAddressAtom);
@@ -26,6 +27,12 @@ export default function TuliaPayDashboard() {
   const [depositAmount, setDepositAmount] = useState("");
   const [sendAmount, setSendAmount] = useState("");
   const [recipient, setRecipient] = useState("");
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const handleConnect = () => setWalletAddress("0x7F5...3aB9");
   
   const handleToggleBalance = () => {
@@ -64,6 +71,14 @@ export default function TuliaPayDashboard() {
     setTimeout(() => { setTxStatus("idle"); setActiveTab("dashboard"); }, 3000);
   };
 
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        {/* Hydration Guard */}
+      </div>
+    );
+  }
+
   if (!walletAddress) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-center p-6 space-y-8 bg-slate-950">
@@ -91,19 +106,7 @@ export default function TuliaPayDashboard() {
   if (!isVerified) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-slate-950">
-        <div className="glass-panel p-12 flex flex-col items-center text-center space-y-8 max-w-xl w-full border-brand/20">
-          <div className="w-24 h-24 rounded-full bg-slate-900 flex items-center justify-center shadow-inner border border-slate-800">
-            <BotOff size={40} className="text-brand-light" />
-          </div>
-          <div className="space-y-3">
-            <h2 className="text-3xl font-black text-white">Bot Protection</h2>
-            <p className="text-slate-400 text-lg leading-relaxed">
-              To maintain the integrity of our private ecosystem, all users must verify 
-              humanity via World ID before accessing the encrypted vault.
-            </p>
-          </div>
-          <WorldIDVerifyButton />
-        </div>
+        <Verification />
       </div>
     );
   }
