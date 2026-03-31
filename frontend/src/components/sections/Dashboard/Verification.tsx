@@ -3,13 +3,9 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { Shield, BotOff, UserCheck } from 'lucide-react'
-import { Button } from '../../ui/Button'
+import { WorldIDVerifyButton } from '../../../app/world-idkit-client'
 
-interface VerificationProps {
-  onVerify: () => void
-}
-
-export const Verification = ({ onVerify }: VerificationProps) => {
+export const Verification = () => {
   return (
     <motion.div 
       initial={{ opacity: 0, scale: 0.95 }}
@@ -36,17 +32,9 @@ export const Verification = ({ onVerify }: VerificationProps) => {
         </p>
       </div>
 
-      <div className="flex flex-col w-full gap-4">
-        <Button 
-          variant="primary" 
-          size="lg" 
-          fullWidth 
-          icon={UserCheck} 
-          onClick={onVerify}
-          className="shadow-2xl shadow-brand/20 text-sm md:text-lg py-4 md:py-6 !gap-2 md:!gap-3"
-        >
-          Verify with World ID
-        </Button>
+      <div className="flex flex-col w-full gap-8">
+        <WorldIDVerifyButton />
+        
         <p className="text-slate-500 text-[10px] md:text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 md:gap-3">
           <Shield size={12} className="text-brand" /> Anonymous Cryptographic Verification
         </p>
