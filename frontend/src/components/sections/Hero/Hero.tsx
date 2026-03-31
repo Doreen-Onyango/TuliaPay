@@ -1,12 +1,14 @@
 "use client"
 
-import React from 'react'
+import React, { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import { useRouter } from 'next/navigation'
 import { ArrowRight, ShieldCheck, Zap, Globe, LucideIcon } from 'lucide-react'
 import { Button } from '../../ui/Button'
 import { Container, Section } from '../../ui/LayoutUtils'
+import { connectWallet, getTuliaProtocolContract } from '@/utils/contractConnection'
 
 const TrustMarker = ({ icon: Icon, text }: { icon: LucideIcon, text: string }) => (
   <div className="flex items-center gap-2 text-slate-300 font-bold text-xs uppercase tracking-widest">
@@ -16,6 +18,31 @@ const TrustMarker = ({ icon: Icon, text }: { icon: LucideIcon, text: string }) =
 )
 
 export const Hero = () => {
+  const [wallet, setWallet] = useState<string | null>(null);
+  const router = useRouter();
+
+  const handleConnect = async () => {
+    try {
+      // 1. Pop open MetaMask and ask user to connect
+      const { signer, address } = await connectWallet();
+      setWallet(address);
+
+      // 2. Connect to the Tulia Protocol
+      const protocolContract = await getTuliaProtocolContract(signer);
+      
+      // 3. Test a quick read!
+      const owner = await protocolContract.owner();
+      console.log("Connected Successfully! 🎉");
+      console.log("Contract Owner is:", owner);
+      
+      // Redirect to dashboard after connection
+      router.push('/dashboard');
+
+    } catch (err) {
+      console.error("Connection Flow Failed:", err);
+    }
+  };
+
   return (
     <Section padding="none" className="pt-28 md:pt-40 pb-16 md:pb-24">
       {/* Background Glows */}
@@ -56,11 +83,11 @@ export const Hero = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row items-center gap-5">
-            <Link href="/dashboard" className="w-full sm:w-auto">
-              <Button variant="white" size="xl" icon={ArrowRight} iconRight fullWidth className="shadow-2xl shadow-white/10 group">
-                Launch App
+            <div className="w-full sm:w-auto">
+              <Button onClick={handleConnect} variant="white" size="xl" icon={ArrowRight} iconRight fullWidth className="shadow-2xl shadow-white/10 group">
+                {wallet ? `Connected: ${wallet.slice(0, 6)}...` : "Launch App"}
               </Button>
-            </Link>
+            </div>
             <Link href="#how-it-works" className="w-full sm:w-auto">
               <Button variant="outline" size="xl" fullWidth className="backdrop-blur-sm">
                 How it Works
