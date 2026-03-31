@@ -23,6 +23,7 @@ import {
 } from '../../store';
 import { BrowserProvider } from 'ethers';
 import { initFhevm } from '../../utils/fhevm';
+import { getTuliaProtocolContract } from '../../utils/contractConnection';
 
 // Modular Components
 import { Button } from '../../components/ui/Button';
@@ -81,14 +82,17 @@ export default function TuliaPayDashboard() {
   const handleToggleBalance = async () => {
     if (balance === "****") {
       setTxStatus("processing");
-      setTxMessage("Requesting re-encryption keys (EIP-712 signature)...");
+      setTxMessage("Fetching FHE Encrypted Balance from smart contract...");
       try {
         if (fhevmInstance && signer && walletAddress) {
-           // Mock getting the re-encryption key via FHE
-           await new Promise(r => setTimeout(r, 1500));
-           setBalance("1,240.50");
+           const protocolContract = await getTuliaProtocolContract();
+           const rawHandle = await protocolContract.getEncryptedBalance();
+           
+           // In a full Zama implementation, you would decrypt 'rawHandle' here using fhevmjs + EIP-712
+           // For this implementation, we will display the hex handle itself to prove it's connected
+           setBalance(`[Encrypted]: ${rawHandle.toString().slice(0, 10)}...`);
            setTxStatus("success");
-           setTxMessage("Balance decrypted securely.");
+           setTxMessage("Encrypted handle securely fetched from contract.");
         } else {
            // Fallback
            await new Promise(r => setTimeout(r, 1000));
@@ -96,9 +100,10 @@ export default function TuliaPayDashboard() {
            setTxStatus("success");
            setTxMessage("Balance decrypted securely.");
         }
-      } catch {
+      } catch (err: any) {
+         console.error(err);
          setTxStatus("error");
-         setTxMessage("Decryption failed.");
+         setTxMessage("Fetching balance failed.");
       }
       setTimeout(() => setTxStatus("idle"), 2000);
     } else {
@@ -109,15 +114,29 @@ export default function TuliaPayDashboard() {
   const [hasPendingWithdrawal, setHasPendingWithdrawal] = React.useState(false);
   const [hasClaimableETH, setHasClaimableETH] = React.useState(false);
 
-  // In production, you would fetch these from the blockchain on load:
-  // const pending = await contract.pendingWithdrawals(walletAddress);
-  // const claimable = await contract.claimablePublicETH(walletAddress);
   React.useEffect(() => {
-    if (walletAddress) {
-      // Mock fetching blockchain state: default to FALSE for clean UI
-      setHasPendingWithdrawal(false);
-      setHasClaimableETH(false);
+    async function fetchBlockchainData() {
+      if (!walletAddress) return;
+
+      try {
+        const protocolContract = await getTuliaProtocolContract();
+        
+        // Fetch real data from your deployed smart contract
+        const pendingHex = await protocolContract.pendingWithdrawals(walletAddress);
+        // If it's a zero hash, there's no withdrawal
+        setHasPendingWithdrawal(pendingHex !== "0x0000000000000000000000000000000000000000000000000000000000000000");
+
+        const claimableWei = await protocolContract.claimablePublicETH(walletAddress);
+        setHasClaimableETH(claimableWei > BigInt(0));
+
+      } catch (err) {
+        console.error("Failed to fetch dashboard state from blockchain:", err);
+        setHasPendingWithdrawal(false);
+        setHasClaimableETH(false);
+      }
     }
+    
+    fetchBlockchainData();
   }, [walletAddress]);
 
   const handleCancelWithdrawal = async () => {
